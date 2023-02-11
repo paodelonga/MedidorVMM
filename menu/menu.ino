@@ -1,5 +1,5 @@
 #include <LiquidCrystal.h>
-LiquidCrystal Display(8, 9, 4, 5, 6, 7);
+LiquidCrystal LiquidCrystal(8, 9, 4, 5, 6, 7);
 
 class KeypadButtons {
 	private:
@@ -51,7 +51,8 @@ class Menu {
 		
 		public:   
 		void display() {
-			Display.printCentered((String)"Menu: "  + currentMenu + " of " + maxMenu, 0, 0);
+			LiquidCrystal.setCursor(0, 0);
+			LiquidCrystal.print((String)"Menu: "  + currentMenu + " of " + maxMenu);
 		}
 		void next() {
 			if(currentMenu < maxMenu) {
@@ -80,7 +81,8 @@ class Menu {
 		
 		public:
 		void display() {
-			Display.printCentered((String)"Page: "  + currentPage + " of " + maxPage, 0, 0);
+			LiquidCrystal.setCursor(0, 0);
+			LiquidCrystal.print((String)"Page: "  + currentPage + " of " + maxPage);
 		}
 		void next() {
 			if(currentPage < maxPage) {
@@ -143,7 +145,7 @@ class Menu {
 Menu;
 
 void setup() {
-	Display.begin(16, 2);
+	LiquidCrystal.begin(16, 2);
 	Menu.display();
 }
 
