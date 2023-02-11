@@ -34,7 +34,7 @@ class Display {
 		LiquidCrystal.createChar(6, charRightBottomBracket);
 		LiquidCrystal.createChar(7, charDelta);
 
-		drawChar(box, 0, 0);	
+		// drawChar(box, 0, 0);	
 	}
 
 	void setCursor(byte column, byte line) {
