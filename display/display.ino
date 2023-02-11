@@ -42,24 +42,22 @@ class Display {
 	}
 
 	void print(String content, byte column, byte line) {
+		drawChar(box, 0, 0);
 		LiquidCrystal.setCursor(column, line);
 		LiquidCrystal.print(content);
 	}
 
 	void printCentered(String content, byte line, byte correction) {
-		if(line == 0) drawLines(topLine);
-		if(line == 1) drawLines(bottomLine);
-		LiquidCrystal.setCursor((abs(17 - content.length()) / 2) - correction, line);
+		drawChar(box, 0, 0);
+		LiquidCrystal.setCursor(((abs(17 - content.length()) / 2) - correction), line);
 		LiquidCrystal.print(content);
 	}
 
 	void printDelta(String content, byte line, byte correction) {
-		if(line == 0) drawLines(topLine);
-		if(line == 1) drawLines(bottomLine);
-		byte column = (abs(17 - content.length()) / 2) - correction;
-		LiquidCrystal.setCursor(column, line);
+		drawChar(box, 0, 0);
+		LiquidCrystal.setCursor(((abs(17 - content.length()) / 2) - correction), line);
 		LiquidCrystal.print(content);
-		drawChar(delta, column - 1, line);
+		drawChar(delta, (((abs(17 - content.length()) / 2) - correction) - 1), line);
 	}
 
 	void clear() {
