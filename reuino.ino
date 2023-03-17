@@ -16,8 +16,7 @@ uint16_t stateSecondIRSensor;
 uint16_t stateThirdIRSensor;
 
 class Display {
-	private:
-	public:
+public:
 	byte lines = 1;
 	byte topLine = 1;
 	byte bottomLine = 2;
@@ -144,9 +143,9 @@ class Display {
 Display;
 
 class Properties {
-	public:
+public:
 	class Project {
-		public:
+	public:
 		const char* Name = "MedidorVMM";
 		const char* Author = "Abiel Mendes";
 		const char* Version = "1.0.0.";
@@ -159,13 +158,13 @@ class Properties {
 	void begin() {
 		Display.printCentered(Project.Name, 0, 0);
 		delay((strlen(Project.Name) * strlen(Project.Name)) * 20);
-		
-		for(byte phrase = 0; phrase < (sizeof(Project.Description) / 2); phrase++){
+
+		for(byte phrase = 0; phrase < (sizeof(Project.Description) / 2); phrase++) {
 			byte cursorPos = (abs(16 - (strlen(Project.Description[phrase]))) / 2);
 			for(byte wordPhrase = 0; wordPhrase < strlen(Project.Description[phrase]); wordPhrase++) {
 				for(byte previousCursorPos = cursorPos; previousCursorPos < (17 - cursorPos); previousCursorPos++) {
 					Display.drawChar(Display.topLine, previousCursorPos, 0);
-				}				
+				}
 				LiquidCrystal.setCursor(cursorPos, 0);
 				LiquidCrystal.print(Project.Description[phrase][wordPhrase]);
 				Serial.print(Project.Description[phrase][wordPhrase]);
@@ -217,12 +216,14 @@ class Properties {
 		byte tryCount = random(1, 10);
 		byte lineCount = tryCount;
 		byte length = strlen(message) + 3;
+
 		for (byte i = 0; i < tryCount; i++) {
 			if(lineCount > 0) {
 				Serial.print(F("PROJETO :: Iniciando em: "));
 				Serial.print(lineCount);
 				Serial.print(F("s"));
 			}
+
 			for (byte x = length; x < length+3; x++) {
 				LiquidCrystal.setCursor(x, 0);
 				LiquidCrystal.print(F("."));
@@ -233,25 +234,23 @@ class Properties {
 				delay(5*115/3.112);
 				Display.drawChar(Display.topLine, x, 0);
 			}
+
 			if(lineCount > 0) {
 				Serial.print(F("\n"));
 				lineCount--;
 			}
-
 		}
 		Serial.println(F("PROJETO :: Iniciado."));
-		
 	}
 }
 Properties;
 
 class KeypadButtons {
-	private:
+private:
 	int16_t buttonValue;
 	byte pressedValue;
 	byte toggledValue;
-
-	public:
+public:
 	static const byte Up = 1;
 	static const byte Down = 2;
 	static const byte Left = 3;
@@ -281,126 +280,28 @@ class KeypadButtons {
 }
 KeypadButtons;
 
-class Menu {
-	private:
-	byte WaitingMode = 0;
-	byte ReadingMode = 1; 
-	byte currentMode = 0;
-	
-	class Waiting {
-		private:
-		public:
-		void display() {
-			byte messageID = 0;
-			long messageTime = millis();
-
-			while(Menu().currentMode == Menu().WaitingMode){
-				if(millis() - messageTime > 1600) {
-					if(messageID == 0) {
-						Display.printCentered("MODE", 0, 0);
-						messageTime = millis();
-						messageID++;
-					}
-				}
-				else if(millis() - messageTime > 1400) {
-					if(messageID == 1) {
-						Display.printCentered("READ", 0, 0);
-						messageTime = millis();
-						messageID = 0;
-					}
-				}
-				Menu().handler();
-			}
-		}
-	}
-	Waiting;
-
-	class Reading {
-		private:
-		byte minRead = 0;
-		byte maxRead = 15;
-		byte currentRead;
-		public:
-		void display() {
-			Display.printCentered((String)"READ ID: " + currentRead, 0, 0);
-			Menu().handler();
-		}
-
-		void next() {
-			if (currentRead == maxRead) {
-				currentRead = minRead;
-			}
-			else if(currentRead < maxRead) {
-				currentRead++;
-			}
-			display();
-		}
-
-		void previous() {
-			if (currentRead == minRead) {
-				currentRead = maxRead;
-			}
-			else if(currentRead > minRead) {
-				currentRead--;
-			}
-			display();
-		}
-	}
-	Reading;
-
-	void display() {
-		if(currentMode == WaitingMode) {
-			Waiting.display();
-		}
-		else if(currentMode == ReadingMode) {
-			Reading.display();
-		}
-	}
-	void handler() {
-		switch(KeypadButtons.Pressed()) {
-			case KeypadButtons.Select:
-			delay(250);
-			if(currentMode == WaitingMode) {
-				currentMode = ReadingMode;
-			}
-			else if(currentMode == ReadingMode) {
-				currentMode = WaitingMode;
-			}
-			break;
-			case KeypadButtons.Up:
-			delay(250);
-			if(currentMode == ReadingMode) {
-				Reading.previous();
-			}
-			break;
-			case KeypadButtons.Down:
-			delay(250);
-			if(currentMode == ReadingMode) {
-				Reading.next();
-			}
-			break;
-		}
-		display();
-	}
-
-	public:
-	void begin() {
-		display();
-	}
-	void loop() {
-		handler();
-	}
-}
-Menu;
+// class Menu {
+// public:
+// }
+// Menu;
 
 void setup() {
 	Serial.begin(9600);
 	delay(250);
 
 	Display.begin(16, 2);
-	// Properties.begin();
-	Menu.begin();
+	Properties.begin();
+	// Menu.begin();
 }
 void loop() {
-	Menu.loop();
+	// Menu.loop();
+	return;
 }
+
+/*
+TODO:
+	Menu class
+	Fix indent
+	Refactor classes
+	Reader class
+*/
