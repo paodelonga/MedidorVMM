@@ -5,15 +5,15 @@ LiquidCrystal LiquidCrystal(8, 9, 4, 5, 6, 7);
 Servo Servo;
 
 // Difinindo os pinos dos atuadores
-#define pinFirstIRSensor A1
-#define pinSecondIRSensor A2
-#define pinThirdIRSensor A3
-#define pinTriggerGate A5
+const byte RELEASE_GATE_PIN = A5; // PONTO A (CANCELA)
+const byte FIRST_IR_SENSOR_PIN = A1; // PONTO B (SENSOR)
+const byte SECOND_IR_SENSOR_PIN = A2; // PONTO C (SENSOR)
+const byte THIRD_IR_SENSOR_PIN = A3; // PONTO D (SENSOR)
 
 // Valores dos sensores
-uint16_t stateFirstIRSensor;
-uint16_t stateSecondIRSensor;
-uint16_t stateThirdIRSensor;
+uint16_t stateFirstIRSensor; // PONTO B (SENSOR)
+uint16_t stateSecondIRSensor; // PONTO C (SENSOR)
+uint16_t stateThirdIRSensor; // PONTO D (SENSOR)
 
 class Display {
 	public:
@@ -146,33 +146,33 @@ class Properties {
 	public:
 	class Project {
 		public:
-		const char* Name = "MedidorVMM";
-		const char* Author = "Abiel Mendes";
-		const char* Version = "1.0.0.";
-		const char* Revision = "Sabado, 11 de Fevereiro de 2023 - 06:45 PM";
-		const char* Github = "https://github.com/CEM-AT/MedidorVMM";
-		const char* Description[4] = {"Medidor de", "Velocidade", "Media no", "Movimento."};
+		const char* NAME = "MedidorVMM";
+		const char* AUTHOR = "Abiel (Paodelonga) Mendes dos Santos";
+		const char* VERSION = "1.0.0.";
+		const char* REVISION = "Terça-Feira, 30 de Maio de 2023 - 06:12 PM";
+		const char* GITHUB = "https://github.com/OphiuchusTeam/MedidorVMM";
+		const char* HEADER[4] = {"Medidor de", "Velocidade", "Media no", "Movimento."};
 	}
 	Project;
 
 	void begin() {
-		Display.printCentered(Project.Name, 0, 0);
-		delay((strlen(Project.Name) * strlen(Project.Name)) * 20);
+		Display.printCentered(Project.NAME, 0, 0);
+		delay((strlen(Project.NAME) * strlen(Project.NAME)) * 20);
 
-		for(byte phrase = 0; phrase < (sizeof(Project.Description) / 2); phrase++) {
-			byte cursorPos = (abs(16 - (strlen(Project.Description[phrase]))) / 2);
-			for(byte wordPhrase = 0; wordPhrase < strlen(Project.Description[phrase]); wordPhrase++) {
+		for(byte phrase = 0; phrase < (sizeof(Project.HEADER) / 2); phrase++) {
+			byte cursorPos = (abs(16 - (strlen(Project.HEADER[phrase]))) / 2);
+			for(byte wordPhrase = 0; wordPhrase < strlen(Project.HEADER[phrase]); wordPhrase++) {
 				for(byte previousCursorPos = cursorPos; previousCursorPos < (17 - cursorPos); previousCursorPos++) {
 					Display.drawChar(Display.topLine, previousCursorPos, 0);
 				}
 				LiquidCrystal.setCursor(cursorPos, 0);
-				LiquidCrystal.print(Project.Description[phrase][wordPhrase]);
-				Serial.print(Project.Description[phrase][wordPhrase]);
-				delay((strlen(Project.Description[phrase]) * strlen(Project.Description[phrase])) * 2);
+				LiquidCrystal.print(Project.HEADER[phrase][wordPhrase]);
+				Serial.print(Project.HEADER[phrase][wordPhrase]);
+				delay((strlen(Project.HEADER[phrase]) * strlen(Project.HEADER[phrase])) * 2);
 				cursorPos++;
 			}
 			Serial.print(' ');
-			delay((strlen(Project.Description[phrase]) * strlen(Project.Description[phrase])) * 6);
+			delay((strlen(Project.HEADER[phrase]) * strlen(Project.HEADER[phrase])) * 6);
 			for(byte nextCursorPos = 1; nextCursorPos < cursorPos - 1; nextCursorPos++) {
 				Display.drawChar(Display.topLine, nextCursorPos, 0);
 			}
@@ -185,33 +185,33 @@ class Properties {
 		Display.printCentered(F("por"), 0, 0);
 		delay(1390);
 
-		Display.printCentered(Project.Author, 0, 0);
-		Serial.print(F("PROJETO :: Author: "));
-		Serial.println(Project.Author);
+		Display.printCentered(Project.AUTHOR, 0, 0);
+		Serial.print(F("ABOUT :: Author: "));
+		Serial.println(Project.AUTHOR);
 		delay(2320);
 
-		Serial.print(F("PROJETO :: Version: "));
-		Serial.println(Project.Version);
+		Serial.print(F("ABOUT :: Version: "));
+		Serial.println(Project.VERSION);
 
 		Display.printCentered(F("Versao"), 0, 0);
 		delay(1420);
 
-		Display.printCentered(Project.Version, .0, 0);
+		Display.printCentered(Project.VERSION, .0, 0);
 		delay(1910);
 
-		Serial.print(F("PROJETO :: Revisao: "));
-		Serial.println(Project.Revision);
+		Serial.print(F("ABOUT :: Revision: "));
+		Serial.println(Project.REVISION);
 
 		Display.printCentered(F("git@paodelonga"), 0, 0);
 		delay(2620);
 
-		Serial.print(F("PROJETO :: Github: "));
-		Serial.println(Project.Github);
+		Serial.print(F("ABOUT :: GitHub: "));
+		Serial.println(Project.GITHUB);
 
-		Serial.println(F("\n"));
+		Serial.println(F(""));
 
 		const char* message = "Iniciando";
-		Display.print(F("Iniciando"), 3, 0);
+		Display.printCentered(F("Iniciando"), 3, 0);
 
 		byte tryCount = random(1, 10);
 		byte lineCount = tryCount;
@@ -219,7 +219,7 @@ class Properties {
 
 		for (byte i = 0; i < tryCount; i++) {
 			if(lineCount > 0) {
-				Serial.print(F("PROJETO :: Iniciando em: "));
+				Serial.print(F("MedidorVMM :: Iniciando em: "));
 				Serial.print(lineCount);
 				Serial.print(F("s"));
 			}
@@ -240,7 +240,8 @@ class Properties {
 				lineCount--;
 			}
 		}
-		Serial.println(F("PROJETO :: Iniciado."));
+		Serial.print(F("\n"));
+		Display.printCentered(F("Iniciado!"), 3, 0);
 	}
 }
 Properties;
@@ -280,13 +281,10 @@ class KeypadButtons {
 }
 KeypadButtons;
 
-class Trigger {
+class ReleaseGate {
 	private:
 	byte servoPin;
 	public:
-	Trigger(byte servoPin) {
-		this->servoPin = servoPin;
-	}
 
 	void open() {
 		Servo.write(65);
@@ -300,7 +298,7 @@ class Trigger {
 
 		Servo.write(63);
 		delay(100);
-		Serial.println(F("MedidorVMM :: Abrindo servo."));
+		Serial.println(F("MedidorVMM :: Abrindo a cancela."));
 	}
 
 	void close() {
@@ -315,36 +313,208 @@ class Trigger {
 
 		Servo.write(10);
 		delay(100);
-		Serial.println(F("MedidorVMM :: Fechando servo."));
+		Serial.println(F("MedidorVMM :: Fechando a cancela."));
 	}
 
-	void init() {
+	void begin(byte servoPin) {
 		Servo.attach(servoPin);
 	}
-};
+}
+ReleaseGate;
 
-// class Menu {
-// public:
-// }
-// Menu;
+class Reading {
+public:
+	class Data {
+	public: // -- WARN: Talvez seja um problema definir o limite dos arrays utilizando variaveis
+		const uint8_t maxReading = 10;
+		const uint8_t minReading = 1;
+		uint8_t currentReading = 0;
+
+		uint8_t initialPosition;
+		uint8_t finalPosition;
+
+		double sensorTimestamps[10][3];
+		double timeIntervals[10][3];
+		double timeVariations[10];
+		double meanVelocity[10][3];
+		double distanceVariation;
+
+		void increaseReading() {
+			if(currentReading < maxReading) {
+				currentReading++;
+			}
+			else if(currentReading >= maxReading) {
+				currentReading = minReading;
+			}
+		}
+	}
+	Data;
+
+	void read() {
+		ReleaseGate.open();
+
+		long messageTimer = millis();
+		byte messageIndex = 0;
+
+		Serial.println(F("MedidorVMM :: Iniciando posicionamento."));
+		Serial.println(F("MedidorVMM :: Posicione o objeto e pressione left."));
+
+		while(1){
+			if((millis() - messageTimer) > 1600) {
+				if(messageIndex == 0) {
+					Display.printCentered(F("Posicione o"), 0, 1);
+					messageTimer = millis();
+					messageIndex++;
+				}
+			}
+			if((millis() - messageTimer) > 1250) {
+				if(messageIndex == 1) {
+					Display.printCentered(F("Objeto e"), 0, 0);
+					messageTimer = millis();
+					messageIndex++;
+				}
+			}
+			if((millis() - messageTimer) > 1200) {
+				if(messageIndex == 3) {
+					Display.printCentered(F("Left."), 0, 0);
+					messageTimer = millis();
+					messageIndex = 0;
+				}
+			}
+			if(KeypadButtons.Pressed() == KeypadButtons.Left) {
+				Data.increaseReading();
+				ReleaseGate.close();
+
+				Serial.println(F("MedidorVMM :: Objeto posicionado."));
+				Serial.println(F("MedidorVMM :: Posicionamento Completo.\n"));
+
+				for (byte seconds = 5; seconds > 0; seconds--) {
+					Serial.println((String)F("MedidorVMM :: Iniciando a leitura em: ") + seconds + F("s."));
+					Display.printCentered((String)F("Iniciando em ") + seconds, 0, 0);
+					delay(1000);
+				}
+
+				Serial.print(F("\n"));
+
+				ReleaseGate.open();
+				Data.sensorTimestamps[Data.currentReading][0] = millis();
+
+				Serial.println(F("MedidorVMM :: Iniciando leitura."));
+
+				messageTimer = millis();
+				messageIndex = 0;
+
+				while(1) {
+					if((millis() - messageTimer) > 1250) {
+						Display.printCentered(F("Iniciando"), 0, 0);
+						messageTimer = millis();
+						messageIndex++;
+					}
+					if((millis() - messageTimer) > 1200) {
+						Display.printCentered(F("Leitura."), 0, 0);
+						messageTimer = millis();
+						messageIndex++;
+					}
+
+					if(digitalRead(FIRST_IR_SENSOR_PIN) == HIGH) {
+						Data.sensorTimestamps[Data.currentReading][1] = millis();
+
+						Serial.println(F("MedidorVMM :: Primeiro sinal interrompido."));
+						Display.printCentered(F("Primeiro IR"), 0, 0);
+
+						while(1) {
+							if(digitalRead(SECOND_IR_SENSOR_PIN) == HIGH) {
+								Data.sensorTimestamps[Data.currentReading][2] = millis();
+
+								Serial.println(F("MedidorVMM :: Segundo sinal interrompido."));
+								Display.printCentered(F("Segundo IR"), 0, 0);
+
+								while(1) {
+									if(digitalRead(THIRD_IR_SENSOR_PIN) == HIGH) {
+										Data.sensorTimestamps[Data.currentReading][3] = millis();
+
+										Serial.println(F("MedidorVMM :: Terceiro sinal interrompido."));
+										Display.printCentered(F("Terceiro IR"), 0, 0);
+
+										Serial.println(F("MedidorVMM :: Leitura completa."));
+										Display.printCentered(F("Leitura completa"), 0, 0);
+
+										ReleaseGate.close();
+
+										Serial.print(F("\n"));
+
+										Serial.println(F("MedidorVMM :: Iniciando calculo dos dados."));
+										Display.printCentered(F("Calculando..."), 0, 0);
+
+										// S(Final) - S(Inicial)
+										Serial.println(F("MedidorVMM :: Calculando a variação de distância.\n"));
+										Data.distanceVariation = abs(Data.finalPosition - Data.initialPosition);
+
+										// A ==> B | (B - A)
+										Serial.println(F("MedidorVMM :: Calculando o primeiro intervalo."));
+										Data.timeIntervals[Data.currentReading][0] = abs(Data.sensorTimestamps[Data.currentReading][1] - Data.sensorTimestamps[Data.currentReading][0]);
+
+										Serial.println(F("MedidorVMM :: Calculando a primeira velocidade.\n"));
+										Data.meanVelocity[Data.currentReading][0] = abs(Data.distanceVariation / Data.timeIntervals[Data.currentReading][0]);
+
+										// B ==> C | (C - B)
+										Serial.println(F("MedidorVMM :: Calculando o segundo intervalo."));
+										Data.timeIntervals[Data.currentReading][1] = abs(Data.sensorTimestamps[Data.currentReading][2] - Data.sensorTimestamps[Data.currentReading][1]);
+
+										Serial.println(F("MedidorVMM :: Calculando a segunda velocidade.\n"));
+										Data.meanVelocity[Data.currentReading][0] = abs(Data.distanceVariation / Data.timeIntervals[Data.currentReading][1]);
+
+										// C ==> D | (D - C)
+										Serial.println(F("MedidorVMM :: Calculando o terceiro intervalo."));
+										Data.timeIntervals[Data.currentReading][2] = abs(Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][2]);
+
+										Serial.println(F("MedidorVMM :: Calculando a terceira velocidade.\n"));
+										Data.meanVelocity[Data.currentReading][0] = abs(Data.distanceVariation / Data.timeIntervals[Data.currentReading][2]);
+
+										// (D - A) | (D - A)
+										Serial.println(F("MedidorVMM :: Calculando a variação de tempo."));
+										Data.timeVariations[Data.currentReading] = abs(Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][0]);
+
+										Serial.println(F("MedidorVMM :: Calculando a velocidade media.\n"));
+										Data.meanVelocity[Data.currentReading][0] = abs(Data.distanceVariation / Data.timeIntervals[Data.currentReading][2]);
+
+										Serial.println(F("MedidorVMM :: Dados calculados e processados."));
+										Serial.println(F("MedidorVMM :: Processamento de dados completo.\n"));
+										Display.printCentered(F("Processado."), 0, 0);
+
+										return;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+Reading;
 
 void setup() {
 	Serial.begin(9600);
 	delay(250);
 
+	ReleaseGate.begin(RELEASE_GATE_PIN);
 	Display.begin(16, 2);
 	Properties.begin();
-	// Menu.begin();
+
+	Reading.read();
 }
 void loop() {
-	// Menu.loop();
-	return;
+	//
 }
 
 /*
 TODO:
-	Menu class
-	Fix indent
-	Refactor classes
 	Reader class
-	*/
+	Menu class
+
+TODOING:
+	Reader class
+
+*/
