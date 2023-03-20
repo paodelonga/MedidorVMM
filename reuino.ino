@@ -16,7 +16,7 @@ uint16_t stateSecondIRSensor;
 uint16_t stateThirdIRSensor;
 
 class Display {
-public:
+	public:
 	byte lines = 1;
 	byte topLine = 1;
 	byte bottomLine = 2;
@@ -143,9 +143,9 @@ public:
 Display;
 
 class Properties {
-public:
-	class Project {
 	public:
+	class Project {
+		public:
 		const char* Name = "MedidorVMM";
 		const char* Author = "Abiel Mendes";
 		const char* Version = "1.0.0.";
@@ -246,11 +246,11 @@ public:
 Properties;
 
 class KeypadButtons {
-private:
+	private:
 	int16_t buttonValue;
 	byte pressedValue;
 	byte toggledValue;
-public:
+	public:
 	static const byte Up = 1;
 	static const byte Down = 2;
 	static const byte Left = 3;
@@ -280,6 +280,49 @@ public:
 }
 KeypadButtons;
 
+class Trigger {
+	private:
+	byte servoPin;
+	public:
+	Trigger(byte servoPin) {
+		this->servoPin = servoPin;
+	}
+
+	void open() {
+		Servo.write(65);
+		delay(100);
+
+		Servo.write(63);
+		delay(100);
+
+		Servo.write(65);
+		delay(100);
+
+		Servo.write(63);
+		delay(100);
+		Serial.println(F("MedidorVMM :: Abrindo servo."));
+	}
+
+	void close() {
+		Servo.write(20);
+		delay(100);
+
+		Servo.write(10);
+		delay(100);
+
+		Servo.write(20);
+		delay(100);
+
+		Servo.write(10);
+		delay(100);
+		Serial.println(F("MedidorVMM :: Fechando servo."));
+	}
+
+	void init() {
+		Servo.attach(servoPin);
+	}
+};
+
 // class Menu {
 // public:
 // }
@@ -304,4 +347,4 @@ TODO:
 	Fix indent
 	Refactor classes
 	Reader class
-*/
+	*/
