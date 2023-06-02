@@ -1,0 +1,21 @@
+# My general editorconfig
+root = true
+
+# General
+[*]
+charset = utf-8
+indent_size = 4
+indent_style = space
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespaces = true
+
+# Markdown
+[*.md]
+indent_size = 2
+indent_style = tab
+
+# Arduino
+[*.ino]
+indent_size = 4
+indent_style = tab
