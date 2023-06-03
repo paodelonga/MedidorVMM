@@ -81,8 +81,8 @@ A usage guide of the project
 ### Contributors
 Page to contributors of this repository
 
-<a href="https://github.com/username/repository_name/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=username/repository_name"/>
+<a href="https://github.com/paodelonga/reuino/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=paodelonga/reuino"/>
 </a>
 
 ---
