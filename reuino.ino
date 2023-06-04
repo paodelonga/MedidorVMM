@@ -5,39 +5,39 @@ LiquidCrystal LiquidCrystal(8, 9, 4, 5, 6, 7);
 Servo Servo;
 
 // Difinindo os pinos dos atuadores
-const byte RELEASE_GATE_PIN = A5;      // PONTO A (CANCELA)
-const byte FIRST_IR_SENSOR_PIN = A1;   // PONTO B (SENSOR)
-const byte SECOND_IR_SENSOR_PIN = A2;  // PONTO C (SENSOR)
-const byte THIRD_IR_SENSOR_PIN = A3;   // PONTO D (SENSOR)
+const byte RELEASE_GATE_PIN = A5; // PONTO A (CANCELA)
+const byte FIRST_IR_SENSOR_PIN = A1; // PONTO B (SENSOR)
+const byte SECOND_IR_SENSOR_PIN = A2; // PONTO C (SENSOR)
+const byte THIRD_IR_SENSOR_PIN = A3; // PONTO D (SENSOR)
 
 // Valores dos sensores
-uint16_t stateFirstIRSensor;   // PONTO B (SENSOR)
-uint16_t stateSecondIRSensor;  // PONTO C (SENSOR)
-uint16_t stateThirdIRSensor;   // PONTO D (SENSOR)
+uint16_t stateFirstIRSensor; // PONTO B (SENSOR)
+uint16_t stateSecondIRSensor; // PONTO C (SENSOR)
+uint16_t stateThirdIRSensor; // PONTO D (SENSOR)
 
 class Display {
 public:
-  byte lines = 1;
-  byte topLine = 1;
-  byte bottomLine = 2;
-  byte leftTopBracket = 3;
-  byte rightTopBracket = 4;
-  byte leftBottomBracket = 5;
-  byte rightBottomBracket = 6;
-  byte delta = 7;
-  byte brackets = 8;
-  byte box = 9;
+  static const byte lines = 1;
+  static const byte topLine = 1;
+  static const byte bottomLine = 2;
+  static const byte leftTopBracket = 3;
+  static const byte rightTopBracket = 4;
+  static const byte leftBottomBracket = 5;
+  static const byte rightBottomBracket = 6;
+  static const byte delta = 7;
+  static const byte brackets = 8;
+  static const byte box = 9;
 
   void begin(byte lcd_columns, byte lcd_lines) {
     LiquidCrystal.begin(lcd_columns, lcd_lines);
 
-    byte charTopLine[8] = { B11111, B00000, B00000, B00000, B00000, B00000, B00000, B00000 };
-    byte charBottomLine[8] = { B00000, B00000, B00000, B00000, B00000, B00000, B00000, B11111 };
-    byte charLeftTopBracket[8] = { B01111, B10000, B10000, B10000, B10000, B10000, B10000, B10000 };
-    byte charRightTopBracket[8] = { B11110, B00001, B00001, B00001, B00001, B00001, B00001, B00001 };
-    byte charLeftBottomBracket[8] = { B10000, B10000, B10000, B10000, B10000, B10000, B10000, B01111 };
-    byte charRightBottomBracket[8] = { B00001, B00001, B00001, B00001, B00001, B00001, B00001, B11110 };
-    byte charDelta[8] = { B00000, B00100, B01010, B01010, B01010, B10001, B11111, B00000 };
+    static const byte charTopLine[8] = { B11111, B00000, B00000, B00000, B00000, B00000, B00000, B00000 };
+    static const byte charBottomLine[8] = { B00000, B00000, B00000, B00000, B00000, B00000, B00000, B11111 };
+    static const byte charLeftTopBracket[8] = { B01111, B10000, B10000, B10000, B10000, B10000, B10000, B10000 };
+    static const byte charRightTopBracket[8] = { B11110, B00001, B00001, B00001, B00001, B00001, B00001, B00001 };
+    static const byte charLeftBottomBracket[8] = { B10000, B10000, B10000, B10000, B10000, B10000, B10000, B01111 };
+    static const byte charRightBottomBracket[8] = { B00001, B00001, B00001, B00001, B00001, B00001, B00001, B11110 };
+    static const byte charDelta[8] = { B00000, B00100, B01010, B01010, B01010, B10001, B11111, B00000 };
 
     LiquidCrystal.createChar(1, charTopLine);
     LiquidCrystal.createChar(2, charBottomLine);
@@ -78,62 +78,69 @@ public:
   }
 
   void drawChar(byte character, byte column, byte line) {
-    if (character == brackets) {
-      LiquidCrystal.setCursor(0, 0);
-      LiquidCrystal.write(leftTopBracket);
+  	switch(character) {
+			case brackets:
+			  LiquidCrystal.setCursor(0, 0);
+	      LiquidCrystal.write(leftTopBracket);
 
-      LiquidCrystal.setCursor(15, 0);
-      LiquidCrystal.write(rightTopBracket);
+	      LiquidCrystal.setCursor(15, 0);
+	      LiquidCrystal.write(rightTopBracket);
 
-      LiquidCrystal.setCursor(0, 1);
-      LiquidCrystal.write(leftBottomBracket);
+	      LiquidCrystal.setCursor(0, 1);
+	      LiquidCrystal.write(leftBottomBracket);
 
-      LiquidCrystal.setCursor(15, 1);
-      LiquidCrystal.write(rightBottomBracket);
-    } else if (character == box) {
-      LiquidCrystal.setCursor(0, 0);
-      LiquidCrystal.write(leftTopBracket);
+	      LiquidCrystal.setCursor(15, 1);
+	      LiquidCrystal.write(rightBottomBracket);
+				break
+			case box:
+	      LiquidCrystal.setCursor(0, 0);
+	      LiquidCrystal.write(leftTopBracket);
 
-      LiquidCrystal.setCursor(15, 0);
-      LiquidCrystal.write(rightTopBracket);
+	      LiquidCrystal.setCursor(15, 0);
+	      LiquidCrystal.write(rightTopBracket);
 
-      LiquidCrystal.setCursor(0, 1);
-      LiquidCrystal.write(leftBottomBracket);
+	      LiquidCrystal.setCursor(0, 1);
+	      LiquidCrystal.write(leftBottomBracket);
 
-      LiquidCrystal.setCursor(15, 1);
-      LiquidCrystal.write(rightBottomBracket);
-
-      for (byte i = 1; i < 15; i++) {
-        LiquidCrystal.setCursor(i, 0);
-        LiquidCrystal.write(topLine);
-        LiquidCrystal.setCursor(i, 1);
-        LiquidCrystal.write(bottomLine);
-      }
-    } else {
-      LiquidCrystal.setCursor(column, line);
-      LiquidCrystal.write(character);
-    }
+	      LiquidCrystal.setCursor(15, 1);
+	      LiquidCrystal.write(rightBottomBracket);
+	      for (byte i = 1; i < 15; i++) {
+	        LiquidCrystal.setCursor(i, 0);
+	        LiquidCrystal.write(topLine);
+	        LiquidCrystal.setCursor(i, 1);
+	        LiquidCrystal.write(bottomLine);
+	      }
+				break
+			default:
+	      LiquidCrystal.setCursor(column, line);
+	      LiquidCrystal.write(character);
+				break
+  	}
   }
 
   void drawLines(byte character) {
-    if (character == lines) {
-      for (byte i = 1; i < 15; i++) {
-        LiquidCrystal.setCursor(i, 0);
-        LiquidCrystal.write(topLine);
-        LiquidCrystal.setCursor(i, 1);
-        LiquidCrystal.write(bottomLine);
-      }
-    } else if (character == topLine) {
-      for (byte i = 1; i < 15; i++) {
-        LiquidCrystal.setCursor(i, 0);
-        LiquidCrystal.write(topLine);
-      }
-    } else if (character == bottomLine) {
-      for (byte i = 1; i < 15; i++) {
-        LiquidCrystal.setCursor(i, 1);
-        LiquidCrystal.write(bottomLine);
-      }
-    }
+  	switch(character) {
+  		case lines:
+	      for (byte i = 1; i < 15; i++) {
+	        LiquidCrystal.setCursor(i, 0);
+	        LiquidCrystal.write(topLine);
+	        LiquidCrystal.setCursor(i, 1);
+	        LiquidCrystal.write(bottomLine);
+	      }
+  			break
+  		case topLine:
+	      for (byte i = 1; i < 15; i++) {
+	        LiquidCrystal.setCursor(i, 0);
+	        LiquidCrystal.write(topLine);
+	      }
+  			break
+  		case bottomLine:
+	      for (byte i = 1; i < 15; i++) {
+	        LiquidCrystal.setCursor(i, 1);
+	        LiquidCrystal.write(bottomLine);
+	      }
+  			break
+  	}
   }
 } Display;
 
@@ -494,7 +501,24 @@ public:
       }
     }
   }
+  
+  void display(uint8_t readingID) {
+    if(readingID > 0) {
+		
+		// data?
+		// headerMessage
+		// intervals(first, second, third, total, total)
+		// distanceVariation(first, second third, total)
+		// timeIntervals(first, Second, Third, total)
+		// meanVelocities(first, second third, total)
+
+    }
+    
+  }
+
 } Reading;
+
+
 
 void setup() {
   Serial.begin(9600);
