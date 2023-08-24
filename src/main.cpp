@@ -19,18 +19,18 @@ class Display {
   static const byte rightTopBracket = 4;
   static const byte leftBottomBracket = 5;
   static const byte rightBottomBracket = 6;
-  static const byte delta = 7;
+  static const byte selectedMark = 7;
   static const byte brackets = 8;
   static const byte box = 9;
 
   void begin(byte lcd_columns, byte lcd_lines) {
-    static const byte charTopLine[8] = {B11111, B00000, B00000, B00000, B00000, B00000, B00000, B00000};
-    static const byte charBottomLine[8] = {B00000, B00000, B00000, B00000, B00000, B00000, B00000, B11111};
-    static const byte charLeftTopBracket[8] = {B01111, B10000, B10000, B10000, B10000, B10000, B10000, B10000};
-    static const byte charRightTopBracket[8] = {B11110, B00001, B00001, B00001, B00001, B00001, B00001, B00001};
-    static const byte charLeftBottomBracket[8] = {B10000, B10000, B10000, B10000, B10000, B10000, B10000, B01111};
-    static const byte charRightBottomBracket[8] = {B00001, B00001, B00001, B00001, B00001, B00001, B00001, B11110};
-    static const byte charDelta[8] = {B00000, B00100, B01010, B01010, B10001, B11111, B00000};
+    byte charTopLine[8] = {B11111, B00000, B00000, B00000, B00000, B00000, B00000, B00000};
+    byte charBottomLine[8] = {B00000, B00000, B00000, B00000, B00000, B00000, B00000, B11111};
+    byte charLeftTopBracket[8] = {B01111, B10000, B10000, B10000, B10000, B10000, B10000, B10000};
+    byte charRightTopBracket[8] = {B11110, B00001, B00001, B00001, B00001, B00001, B00001, B00001};
+    byte charLeftBottomBracket[8] = {B10000, B10000, B10000, B10000, B10000, B10000, B10000, B01111};
+    byte charRightBottomBracket[8] = {B00001, B00001, B00001, B00001, B00001, B00001, B00001, B11110};
+    byte charSelectedMark[8] = { B00000, B01000, B01100, B01110, B01110, B01100, B01000, B00000};
 
     LiquidCrystal.begin(lcd_columns, lcd_lines);
     LiquidCrystal.createChar(1, charTopLine);
@@ -39,13 +39,8 @@ class Display {
     LiquidCrystal.createChar(4, charRightTopBracket);
     LiquidCrystal.createChar(5, charLeftBottomBracket);
     LiquidCrystal.createChar(6, charRightBottomBracket);
-    LiquidCrystal.createChar(7, charDelta);
-
+    LiquidCrystal.createChar(7, charSelectedMark);
     drawChar(box, 0, 0);
-  }
-
-  void setCursor(byte column, byte line) {
-    LiquidCrystal.setCursor(column, line);
   }
 
   void print(String content, byte column, byte line) {
@@ -90,13 +85,17 @@ class Display {
     LiquidCrystal.print(content);
 
     if (line == 0) {
+      drawChar(leftTopBracket, 0, line);  
       for (byte backwardCursorPos = 1; backwardCursorPos < cursorPos; backwardCursorPos++) {
         drawChar(topLine, backwardCursorPos, line);
       }
+      drawChar(rightTopBracket, 15, line);  
     } else if (line == 1) {
+      drawChar(leftBottomBracket, 0, line);  
       for (byte backwardCursorPos = 1; backwardCursorPos < cursorPos; backwardCursorPos++) {
         drawChar(bottomLine, backwardCursorPos, line);
       }
+      drawChar(rightBottomBracket, 15, line);  
     }
 
     if (line == 0) {
@@ -292,23 +291,19 @@ public:
 class Data {
  public:
   const byte maxReading = 10;
-  const byte minReading = 0;
   byte currentReading;
-
-  float initialPosition;
-  float finalPosition;
 
   float sensorPosition[10][2];
   float sensorTimestamps[10][3];
   float timeIntervals[10][3];
   float meanVelocity[10][3];
-  float distanceVariation[10];
+  float distanceVariation[10][3];
 
   void increaseReading() {
     if (currentReading < maxReading) {
       currentReading++;
-    } else if (currentReading > maxReading) {
-      currentReading = minReading;
+    } else if (currentReading == maxReading) {
+      currentReading = 0;
     }
   }
 } Data;
@@ -340,7 +335,6 @@ void read() {
     }
 
     if (KeypadButtons.Pressed() == KeypadButtons.Left) {
-      Data.increaseReading();
       ReleaseGate.close();
 
       Serial.println(F("MedidorVMM :: Objeto posicionado."));
@@ -391,39 +385,31 @@ void read() {
 
                   ReleaseGate.close();
 
-                  Serial.println(F("\nMedidorVMM :: Iniciando calculo dos dados.\n"));
+                  Serial.println(F("\nMedidorVMM :: INICIANDO CALCULO DOS DADOS.\n"));
 
-                  Serial.println(F("MedidorVMM :: Calculando a variação de distância.\n"));
-                  Data.distanceVariation[Data.currentReading] = (Data.finalPosition - Data.initialPosition);
+                  Serial.println(F("MedidorVMM :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
+                  Data.distanceVariation[Data.currentReading][0] = (Data.sensorPosition[Data.currentReading][0]); // S1 - LG
+                  Data.distanceVariation[Data.currentReading][1] = abs(Data.sensorPosition[Data.currentReading][1] - Data.sensorPosition[Data.currentReading][0]); // S2 - S1
+                  Data.distanceVariation[Data.currentReading][2] = abs(Data.sensorPosition[Data.currentReading][2] - Data.sensorPosition[Data.currentReading][1]); // S3 - S2
+                  Data.distanceVariation[Data.currentReading][3] = abs(Data.sensorPosition[Data.currentReading][2]); // S3 - LG
 
-                  Serial.println(F("MedidorVMM :: Calculando o primeiro intervalo."));
-                  Data.timeIntervals[Data.currentReading][0] = (Data.sensorTimestamps[Data.currentReading][1] - Data.sensorTimestamps[Data.currentReading][0]);
-
-                  Serial.println(F("MedidorVMM :: Calculando o segundo intervalo."));
-                  Data.timeIntervals[Data.currentReading][1] = (Data.sensorTimestamps[Data.currentReading][2] - Data.sensorTimestamps[Data.currentReading][1]);
-
-                  Serial.println(F("MedidorVMM :: Calculando o terceiro intervalo.\n"));
-                  Data.timeIntervals[Data.currentReading][2] = (Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][2]);
-
-                  Serial.println(F("MedidorVMM :: Calculando a primeira velocidade."));
-                  Data.meanVelocity[Data.currentReading][0] = (Data.distanceVariation[Data.currentReading] / Data.timeIntervals[Data.currentReading][0]);
-
-                  Serial.println(F("MedidorVMM :: Calculando a segunda velocidade."));
-                  Data.meanVelocity[Data.currentReading][1] = (Data.distanceVariation[Data.currentReading] / Data.timeIntervals[Data.currentReading][1]);
-
-                  Serial.println(F("MedidorVMM :: Calculando a terceira velocidade.\n"));
-                  Data.meanVelocity[Data.currentReading][2] = (Data.distanceVariation[Data.currentReading] / Data.timeIntervals[Data.currentReading][2]);
-
-                  Serial.println(F("MedidorVMM :: Calculando o intervalo total."));
-                  Data.timeIntervals[Data.currentReading][3] = (Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][0]);
-
-                  Serial.println(F("MedidorVMM :: Calculando a velocidade total.\n"));
-                  Data.meanVelocity[Data.currentReading][3] = (Data.distanceVariation[Data.currentReading] / Data.timeIntervals[Data.currentReading][3]);
-
-                  Serial.println(F("MedidorVMM :: Dados calculados e processados."));
-                  Serial.println(F("MedidorVMM :: Processamento de dados completo.\n"));
-                  Display.printCentered(F("Leitura"), 0, 0);
-                  Display.printCentered(F("Completa."), 1, 0);
+                  Serial.println(F("MedidorVMM :: CALCULADO VARIAÇÃO DE TEMPO."));
+                  Data.timeIntervals[Data.currentReading][0] = abs(Data.sensorTimestamps[Data.currentReading][1] - Data.sensorTimestamps[Data.currentReading][0]); // S1 - LG
+                  Data.timeIntervals[Data.currentReading][1] = abs(Data.sensorTimestamps[Data.currentReading][2] - Data.sensorTimestamps[Data.currentReading][1]); // S2 - S1
+                  Data.timeIntervals[Data.currentReading][2] = abs(Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][2]); // S3 - S2
+                  Data.timeIntervals[Data.currentReading][3] = abs(Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][0]); // S3 - LG
+                  
+                  Serial.println(F("MedidorVMM :: CALCULANDO VELOCIDADE MÉDIA."));
+                  Data.meanVelocity[Data.currentReading][0] = (Data.distanceVariation[Data.currentReading][0] / (Data.timeIntervals[Data.currentReading][0] / 1000)); // S1 - LG
+                  Data.meanVelocity[Data.currentReading][1] = (Data.distanceVariation[Data.currentReading][1] / (Data.timeIntervals[Data.currentReading][1] / 1000)); // S2 - S1
+                  Data.meanVelocity[Data.currentReading][2] = (Data.distanceVariation[Data.currentReading][2] / (Data.timeIntervals[Data.currentReading][2] / 1000)); // S3 - S2
+                  Data.meanVelocity[Data.currentReading][3] = (Data.distanceVariation[Data.currentReading][3] / (Data.timeIntervals[Data.currentReading][3] / 1000)); // S3 - LG
+                  
+                  Serial.println(F("MedidorVMM :: DADOS PROCESSADOS E CALCULADOS."));
+                  Serial.println(F("MedidorVMM :: PROCESSAMENTO COMPLETO.\n"));
+                  Display.printCentered(F("LEITURA"), 0, 0);
+                  Display.printCentered(F("COMPLETA."), 1, 0);
+                  Data.increaseReading();
                   return;
                 }
               }
@@ -434,6 +420,52 @@ void read() {
     }
   }
 }
+
+void display() {
+  String _top = (String)F("|======= LEITURA =======|");
+
+  String messages[17] = {
+    F("Variação de Distancia"),
+    (String)F("Primeira: ") + Data.distanceVariation[Data.currentReading - 1][0] + F("cm"),
+    (String)F("Segunda: ") + Data.distanceVariation[Data.currentReading - 1][1] + F("cm"),
+    (String)F("Terceira: ") + Data.distanceVariation[Data.currentReading - 1][2] + F("cm"),
+    (String)F("Total: ") + Data.distanceVariation[Data.currentReading - 1][3] + F("cm"),
+    "",
+    F("Intervalo de Tempo"),
+    (String)F("Primeiro: ") + Data.timeIntervals[Data.currentReading - 1][0] + F("ms"),
+    (String)F("Segundo: ") + Data.timeIntervals[Data.currentReading - 1][1] + F("ms"),
+    (String)F("Terceiro: ") + Data.timeIntervals[Data.currentReading - 1][2] + F("ms"),
+    (String)F("Total: ") + Data.timeIntervals[Data.currentReading - 1][3] + F("ms"),
+    "",
+    F("Velocidade Média"),
+    (String)F("Primeira: ") + Data.meanVelocity[Data.currentReading - 1][0] + F("cm/ms"),
+    (String)F("Segunda: ") + Data.meanVelocity[Data.currentReading - 1][1] + F("cm/ms"),
+    (String)F("Terceira: ") + Data.meanVelocity[Data.currentReading - 1][2] + F("cm/ms"),
+    (String)F("Total: ") + Data.meanVelocity[Data.currentReading - 1][3] + F("cm/ms"),
+  };
+
+  Serial.println(_top);
+  for (byte line = 0; line < 16; line++) {
+    for(byte line_size = 0; line_size < (abs(_top.length() - messages[line].length()) / 2); line_size++){
+      Serial.print(F(" ")); 
+      delay(10);
+    }
+    Serial.print(messages[line]);
+    for(unsigned int line_size = 0; line_size < (abs(_top.length() - messages[line].length()) / 2); line_size++){
+      Serial.print(F(" ")); 
+      delay(10);
+    }
+    Serial.println(F(""));
+    delay(10);  
+  }
+  Serial.print(F("|"));
+  for(byte line_size = 0; line_size < _top.length(); line_size++){
+    Serial.print(F("=")); 
+  }
+  Serial.print(F("|\n"));
+  return;
+}
+
 } Reading;
 
 class Menu {
@@ -441,13 +473,11 @@ class Menu {
   class Options {
    public:
     static const byte _MIN_PREFS = 1;
-    static const byte _MAX_PREFS = 5;
+    static const byte _MAX_PREFS = 3;
     byte _FOCUSED_PREFS;
     byte _SELECTED_PREFS;
-    const char *_OPTIONS_LABEL[6] = {
+    const char *_OPTIONS_LABEL[4] = {
         "",
-        "POS INICIAL",
-        "POS FINAL",
         "POS SENSOR 1",
         "POS SENSOR 2",
         "POS SENSOR 3"};
@@ -455,26 +485,85 @@ class Menu {
     void displayFocusedPref() {
       Display.printCentered((String)_OPTIONS_LABEL[_FOCUSED_PREFS], 0, 0);
       if (_FOCUSED_PREFS == 1) {
-        Display.printCentered(String(Reading.Data.initialPosition), 1, 0);
-      
+        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]), 1, 0);
+
       } else if (_FOCUSED_PREFS == 2) {
-        Display.printCentered(String(Reading.Data.finalPosition), 1, 0);
+        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]), 1, 0);
+     
+      } else if (_FOCUSED_PREFS == 3) {
+        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][2]), 1, 0);
+      }
+    }
+
+    void displaySelectedPref() {
+      Display.printCentered((String)_OPTIONS_LABEL[_FOCUSED_PREFS], 0, 0);
+      if (_FOCUSED_PREFS == 1) {
+        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]), 1, 0);
+        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]).length()) / 2, 1);
+
+      } else if (_FOCUSED_PREFS == 2) {
+        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]), 1, 0);
+        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]).length()) / 2, 1);
       
       } else if (_FOCUSED_PREFS == 3) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]), 1, 0);
-      
-      } else if (_FOCUSED_PREFS == 4) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]), 1, 0);
-      
-      } else if (_FOCUSED_PREFS == 5) {
         Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][2]), 1, 0);
+        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[Reading.Data.currentReading][2]).length()) / 2, 1);
       }
     }
 
     void selectPref() {
       _SELECTED_PREFS = _FOCUSED_PREFS;
-      Display.printCentered(F("PREFERENCIAS"), 0, 0);
-      Display.printCentered((String)F("FOCAMO! ") + _FOCUSED_PREFS, 1, 0);
+      displaySelectedPref();
+    }
+
+    void increasePrefValue(float inc) {
+      if (_FOCUSED_PREFS == 1) {
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 190) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][0] += inc;
+        } else {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 10;
+        }
+      
+      } else if (_FOCUSED_PREFS == 2) {
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 190) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][1] += inc;
+        } else {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 20;
+        }
+      
+      } else if (_FOCUSED_PREFS == 3) {
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 190) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][2] += inc;
+        } else {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 60;
+        }
+      }
+      displaySelectedPref();
+    }
+
+    void decreasePrefValue(float dec) {
+      if (_FOCUSED_PREFS == 1) {
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] > 0) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][0] -= dec;
+        } else {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 190;
+        }
+      
+      } else if (_FOCUSED_PREFS == 2) {
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] > 0) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][1] -= dec;
+        } else {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 190;
+        }
+      
+      } else if (_FOCUSED_PREFS == 3) {
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] > 0) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][2] -= dec;
+        } else {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 190;
+        }
+      }
+      displaySelectedPref();
     }
 
     void focusNextPrefs() {
@@ -493,16 +582,100 @@ class Menu {
 
   } Options;
 
+  class DisplayPage {
+    private:
+    public:
+      static const byte _STANDBY = 0;
+      static const byte _MIN_PAGE = 1;
+      static const byte _MAX_PAGE = 3;
+      static const byte _MIN_SUBPAGE = 0;
+      static const byte _MAX_SUBPAGE = 1;
+      byte _SELECTED_PAGE;
+      byte _FOCUSED_PAGE;
+      byte _FOCUSED_SUBPAGE;
+
+      const char *_PAGE_LABELS[4][2] = {
+        {},
+        {"VARIACAO DE", "DISTANCIA (CM)"},
+        {"INTERVALO DE", "TEMPO (MS)"},
+        {"VELOCIDADE", "MEDIA (CM/S)"}
+      };
+
+      void displayFocusedPage() {
+        Display.printCentered(_PAGE_LABELS[_FOCUSED_PAGE][0], 0, 0);
+        Display.printCentered(_PAGE_LABELS[_FOCUSED_PAGE][1], 1, 0);
+      }
+
+      void displayFocusedSubpage() {
+        _SELECTED_PAGE = _FOCUSED_PAGE;
+        String _SUB_PAGE_LABEL[5][4] = {
+          {},
+          {
+            (String)"V1: " + Reading.Data.distanceVariation[Reading.Data.currentReading - 1][0],
+            (String)"V2: " + Reading.Data.distanceVariation[Reading.Data.currentReading - 1][1],
+            (String)"V3: " + Reading.Data.distanceVariation[Reading.Data.currentReading - 1][2],
+            (String)"V4: " + Reading.Data.distanceVariation[Reading.Data.currentReading - 1][3] },
+          {
+            (String)"I1 " + Reading.Data.timeIntervals[Reading.Data.currentReading - 1][0],
+            (String)"I2 " + Reading.Data.timeIntervals[Reading.Data.currentReading - 1][1],
+            (String)"I3 " + Reading.Data.timeIntervals[Reading.Data.currentReading - 1][2],
+            (String)"I4 " + Reading.Data.timeIntervals[Reading.Data.currentReading - 1][3]
+          },
+          {
+            (String)"V1 " + Reading.Data.meanVelocity[Reading.Data.currentReading - 1][0],
+            (String)"V2 " + Reading.Data.meanVelocity[Reading.Data.currentReading - 1][1],
+            (String)"V3 " + Reading.Data.meanVelocity[Reading.Data.currentReading - 1][2],
+            (String)"V4 " + Reading.Data.meanVelocity[Reading.Data.currentReading - 1][3]
+          }
+        };
+        if(_FOCUSED_SUBPAGE == _MIN_SUBPAGE) {
+          Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][0], 0, 0);
+          Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][1], 1, 0);
+        } else if(_FOCUSED_SUBPAGE == _MAX_SUBPAGE){
+          Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][2], 0, 0);
+          Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][3], 1, 0);            
+        }      }
+
+      void focusNextSubpage() {
+        if(_FOCUSED_SUBPAGE < _MAX_SUBPAGE){
+            _FOCUSED_SUBPAGE++;
+        }
+        displayFocusedSubpage();
+      }
+
+      void focusPrevSubpage() {
+        if(_FOCUSED_SUBPAGE > _MIN_SUBPAGE){
+            _FOCUSED_SUBPAGE--;
+        }
+        displayFocusedSubpage();
+      }
+
+
+      void focusNextPage() {
+        if (_FOCUSED_PAGE < _MAX_PAGE) {
+          _FOCUSED_PAGE++;
+        }
+        displayFocusedPage();
+      }
+
+      void focusPrevPage() {
+        if (_FOCUSED_PAGE > _MIN_PAGE) {
+          _FOCUSED_PAGE--;
+        }
+        displayFocusedPage();
+      }
+  } DisplayPage;
+ 
   static const byte _STANDBY = 0;
   static const byte _READ = 1;
-  static const byte _DISPLAY = 2;
-  static const byte _PREFERENCES = 3;
+  static const byte _PREFERENCES = 2;
+  static const byte _DISPLAY = 3;
   static const byte _MIN_MENU = 1;
   static const byte _MAX_MENU = 3;
 
   byte _FOCUSED_MENU;
   byte _SELECTED_MENU;
-  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"EXIBIR DADOS", "DA LEITURA"}, {"ALTERAR", "CONFIGS"}};
+  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"ALTERAR", "CONFIGS"}, {"EXIBIR DADOS", "DA LEITURA"}};
   long switcherTime;
 
   void displayFocusedMenu() {
@@ -523,15 +696,18 @@ class Menu {
   void selectMenu() {
     switch (_FOCUSED_MENU) {
       case _READ:
-        _SELECTED_MENU = _READ;
+        Reading.read();
         break;
       case _DISPLAY:
         _SELECTED_MENU = _DISPLAY;
+        DisplayPage._FOCUSED_PAGE = DisplayPage._MIN_PAGE;
+        DisplayPage.displayFocusedPage();
+        // Reading.display();
         break;
       case _PREFERENCES:
         _SELECTED_MENU = _PREFERENCES;
-        Display.printCentered(F("PREFERENCIAS"), 0, 0);
-        Display.printCentered(F(""), 1, 0);
+        Options._FOCUSED_PREFS = Options._MIN_PREFS;
+        Options.displayFocusedPref();
         break;
     }
   }
@@ -559,54 +735,119 @@ class Menu {
     }
 
     if (KeypadButtons.Pressed() == KeypadButtons.Select) {
-      delay(250);
-      // Escolha de menus
+      // Navegacao principal entre os menus
       if (_SELECTED_MENU == _STANDBY) {
         switchFocusedMenus();
-        Serial.println("ESCOLHENDO MENU");
+        delay(250);
       } 
 
-      // Volta para escolha de menus apos escolher preferencias e nao selecionar nenhuma preferencia
+      // Voltar para escolha de menus apos somente focar em uma preferencia
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
         Options._FOCUSED_PREFS = _STANDBY;
         _SELECTED_MENU = _STANDBY;
         displayFocusedMenu();
-        Serial.println("VOLTANDO PARA ESCOLHA DE MENU");
+        delay(250);
       }
       
-      // Voltar para o modo de escolha de preferencia se estiver escolhido uma preferencia
+      // Voltar para escolha de menus apos somente focar em uma pagina da exibicao
+      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE == _STANDBY) {
+        DisplayPage._FOCUSED_PAGE = _STANDBY;
+        _SELECTED_MENU = _STANDBY;
+        displayFocusedMenu();
+        delay(250);
+      }
+
+      // Aumenta a valor decimal de uma preferencia expecifica
+      else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
+        Options.increasePrefValue(0.01);
+        delay(250);
+      } 
+
+      // Exibe a subpagina anterior na pagina atual
+      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
+        DisplayPage.focusPrevSubpage();
+        delay(250);
+      }
+    } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
+      // Escolha de um menu especifico durante a navegacao entre os menus
+      if (_SELECTED_MENU == _STANDBY && _FOCUSED_MENU != _STANDBY) {
+        selectMenu();
+        delay(250);
+      }
+
+      // Escolha de uma preferencia
+      else if (_SELECTED_MENU == _PREFERENCES && Options._FOCUSED_PREFS != _STANDBY && Options._SELECTED_PREFS == _STANDBY) {
+        Options.selectPref();
+        delay(250);
+      }
+
+      // Escolha de uma pagina
+      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._FOCUSED_PAGE != _STANDBY && DisplayPage._SELECTED_PAGE == _STANDBY) {
+        DisplayPage.displayFocusedSubpage();
+        delay(250);
+      }
+      
+      // Voltar para a escolha de preferencias
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options._SELECTED_PREFS = _STANDBY;
         Options.displayFocusedPref();
-        Serial.println("VOLTANDO PARA ESCOLHA DE PREFERENCIA");
+        delay(250);
+      }      
+      // Voltar para a escolha de paginas
+      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
+        DisplayPage._SELECTED_PAGE = _STANDBY;
+        DisplayPage._FOCUSED_SUBPAGE = _STANDBY;
+        DisplayPage.displayFocusedPage();
+        delay(250);
       }
-
-    } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
-      delay(250);
-
-      // Escolha de menus somente se estiver no modo de escolha
-      if (_SELECTED_MENU == _STANDBY && _FOCUSED_MENU != _STANDBY) {
-        selectMenu();
-        Serial.println("MENU ESCOLHIDO");
-      }
-
-      // Escolhe uma preferencia se a preferencia focada nao for a padrao mas se a selecionado anteriormente for
-      else if (_SELECTED_MENU == _PREFERENCES && Options._FOCUSED_PREFS != _STANDBY && Options._SELECTED_PREFS == _STANDBY) {
-        Options.selectPref();
-        Serial.println("PREFERENCIA ESCOLHIDA");
-      }
-
     } else if (KeypadButtons.Pressed() == KeypadButtons.Up) {
-      delay(250);
-      
       // Foca na preferencia anterior somente se estiver no menu de preferencias e nenhuma for selecionada
-      if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) { Options.focusPrevPrefs(); }
+      if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
+        Options.focusPrevPrefs(); 
+        delay(250);
+      }
 
+      // Aumenta o valor inteiro de uma preferencia
+      else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
+        Options.increasePrefValue(1.00);
+        delay(90);
+      }
+
+      // Focaliza na pagina anterior
+      if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE == _STANDBY) {
+        DisplayPage.focusPrevPage(); 
+        delay(250);
+      }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Down) {
-      delay(250);
+      // Focaliza na proxima preferencia
+      if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
+        Options.focusNextPrefs();
+        delay(250);
+      }
+      
+      // Diminui o valor inteiro de uma preferencia expecifica
+      else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
+        Options.decreasePrefValue(1.00);
+        delay(90);
+      }
 
-      // Foca na proxima preferencia somente se estiver no menu de preferencias e nenhuma for selecionada
-      if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) { Options.focusNextPrefs(); }
+      // Focaliza na proxima pagina
+      if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE == _STANDBY) {
+        DisplayPage.focusNextPage(); 
+        delay(250);
+      }
+    }  else if (KeypadButtons.Pressed() == KeypadButtons.Left) {
+      // Diminui o valor decimal de uma preferencia expecifica
+      if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
+        Options.decreasePrefValue(0.01);
+        delay(180);
+      }
+
+      // Exibe a proxima subpagina da pagina atual
+      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
+        DisplayPage.focusNextSubpage();
+        delay(250);
+      }
     }
 
     if (millis() > (switcherTime + 10000) and _SELECTED_MENU == _STANDBY) {
@@ -617,9 +858,6 @@ class Menu {
 } Menu;
 
 void setup() {
-  Reading.Data.initialPosition = 30.0;
-  Reading.Data.finalPosition = 120.0;
-
   pinMode(FIRST_IR_SENSOR_PIN, INPUT);
   pinMode(SECOND_IR_SENSOR_PIN, INPUT);
   pinMode(THIRD_IR_SENSOR_PIN, INPUT);
@@ -637,3 +875,11 @@ void setup() {
 void loop() {
   Menu.loop();
 }
+
+/*
+
+fix: the next, current and prev reading problem between display and reading
+fix: memory overloading 
+feat: switch between saved reads
+fix: warnings during compilation
+*/
