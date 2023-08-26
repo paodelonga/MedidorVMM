@@ -373,6 +373,13 @@ class Reading {
                     // Serial.println(F("\nMedidorVMM :: INICIANDO CALCULO DOS DADOS.\n"));
 
                     Serial.println(F("MedidorVMM :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
+
+                    // Adjust position value to sensor center
+                    Data.sensorPosition[Data.currentReading][0] += 15.5;
+                    Data.sensorPosition[Data.currentReading][1] += 15.5;
+                    Data.sensorPosition[Data.currentReading][2] += 15.5;
+                    Data.sensorPosition[Data.currentReading][2] += 15.5;
+
                     Data.distanceVariation[Data.currentReading][0] = Data.sensorPosition[Data.currentReading][0];                                                // S1 - LG
                     Data.distanceVariation[Data.currentReading][1] = Data.sensorPosition[Data.currentReading][1] - Data.sensorPosition[Data.currentReading][0];  // S2 - S1
                     Data.distanceVariation[Data.currentReading][2] = Data.sensorPosition[Data.currentReading][2] - Data.sensorPosition[Data.currentReading][1];  // S3 - S2
@@ -385,10 +392,10 @@ class Reading {
                     Data.timeIntervals[Data.currentReading][3] = Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][0];  // S3 - LG
 
                     Serial.println(F("MedidorVMM :: CALCULANDO VELOCIDADE MÉDIA."));
-                    Data.meanVelocity[Data.currentReading][0] = Data.distanceVariation[Data.currentReading][0] / (Data.timeIntervals[Data.currentReading][0] / 1000.0);  // S1 - LG
-                    Data.meanVelocity[Data.currentReading][1] = Data.distanceVariation[Data.currentReading][1] / (Data.timeIntervals[Data.currentReading][1] / 1000.0);  // S2 - S1
-                    Data.meanVelocity[Data.currentReading][2] = Data.distanceVariation[Data.currentReading][2] / (Data.timeIntervals[Data.currentReading][2] / 1000.0);  // S3 - S2
-                    Data.meanVelocity[Data.currentReading][3] = Data.distanceVariation[Data.currentReading][3] / (Data.timeIntervals[Data.currentReading][3] / 1000.0);  // S3 - LG
+                    Data.meanVelocity[Data.currentReading][0] = Data.distanceVariation[Data.currentReading][0] / (Data.timeIntervals[Data.currentReading][0] / float(1000));  // S1 - LG
+                    Data.meanVelocity[Data.currentReading][1] = Data.distanceVariation[Data.currentReading][1] / (Data.timeIntervals[Data.currentReading][1] / float(1000));  // S2 - S1
+                    Data.meanVelocity[Data.currentReading][2] = Data.distanceVariation[Data.currentReading][2] / (Data.timeIntervals[Data.currentReading][2] / float(1000));  // S3 - S2
+                    Data.meanVelocity[Data.currentReading][3] = Data.distanceVariation[Data.currentReading][3] / (Data.timeIntervals[Data.currentReading][3] / float(1000));  // S3 - LG
 
                     Serial.println(F("MedidorVMM :: DADOS PROCESSADOS E CALCULADOS."));
                     Serial.println(F("MedidorVMM :: PROCESSAMENTO COMPLETO.\n"));
