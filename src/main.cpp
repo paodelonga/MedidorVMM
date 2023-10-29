@@ -159,29 +159,29 @@ class Properties {
     const char *AUTHORS_FULLNAME[2] = {"Jotaquerles do Nascimento França", "Abiel Mendes dos Santos"};
     const char *AUTHORS_SURNAME[2] = {"Jotaquerles N", "Abiel M"};
     const char *VERSION = "1.0.0";
-    const char *REVISION_DATE = "Friday, 25 August, 2023; 25/08/2023 - 14:07:45";
-    const char *REPO_URL = "https://github.com/paodelonga/medidor-vmm";
+    const char *REVISION_DATE = "Sunday, 29 October, 2023; 29/10/2023 - 07:39:36";
+    const char *REPO_URL = "https://github.com/paodelonga/aemf-01";
 
     Display.printWait(F("Autores"), 0, 0);
     Display.printWait((AUTHORS_SURNAME[0]), 0, 0);
     Display.printWait((AUTHORS_SURNAME[1]), 0, 0);
 
-    Serial.print(F("MedidorVMM :: Autores: "));
+    Serial.print(F("AEMF :: Autores: "));
     Serial.println(AUTHORS_FULLNAME[0]);
-    Serial.print(F("MedidorVMM :: Autores: "));
+    Serial.print(F("AEMF :: Autores: "));
     Serial.println(AUTHORS_FULLNAME[1]);
 
-    Serial.print(F("MedidorVMM :: Versao: "));
+    Serial.print(F("AEMF :: Versao: "));
     Serial.println(VERSION);
 
     Display.printWait((String)F("Versao: ") + VERSION, 0, 1);
 
-    Serial.print(F("MedidorVMM :: Revisao: "));
+    Serial.print(F("AEMF :: Revisao: "));
     Serial.println(REVISION_DATE);
 
     Display.printWait(F("git@paodelonga"), 0, 0);
 
-    Serial.print(F("MedidorVMM :: Repositorio: "));
+    Serial.print(F("AEMF :: Repositorio: "));
     Serial.println(REPO_URL);
 
     Serial.println(F(""));
@@ -298,8 +298,8 @@ class Reading {
   void read() {
     ReleaseGate.open();
 
-    Serial.println(F("MedidorVMM :: PARA INICIAR POSICIONE O OBJETO"));
-    Serial.println(F("MedidorVMM :: E PRESSIONE RIGHT PARA RETENCAO."));
+    Serial.println(F("AEMF :: PARA INICIAR POSICIONE O OBJETO"));
+    Serial.println(F("AEMF :: E PRESSIONE RIGHT PARA RETENCAO."));
 
     long messageTimer = millis();
     byte messageIndex = 0;
@@ -323,10 +323,10 @@ class Reading {
 
       if (KeypadButtons.Pressed() == KeypadButtons.Right) {
         ReleaseGate.close();
-        Serial.println(F("MedidorVMM :: OBJETO RETIDO"));
+        Serial.println(F("AEMF :: OBJETO RETIDO"));
 
         for (byte seconds = random(0, 10); seconds > 0; seconds--) {
-          Serial.print(F("MedidorVMM :: LIBERANDO OBJETO EM: "));
+          Serial.print(F("AEMF :: LIBERANDO OBJETO EM: "));
           Serial.print(seconds);
           Serial.println(F("s"));
           Display.printCentered(F("LIBERANDO EM"), 0, 0);
@@ -334,10 +334,10 @@ class Reading {
           delay(1000);
         }
 
-        Serial.println(F("MedidorVMM :: INICIANDO LEITURA DOS SENSORES."));
+        Serial.println(F("AEMF :: INICIANDO LEITURA DOS SENSORES."));
         ReleaseGate.open();
         Data.sensorTimestamps[Data.currentReading][0] = millis();
-        Serial.println(F("MedidorVMM :: OBJETO LIBERADO."));
+        Serial.println(F("AEMF :: OBJETO LIBERADO."));
 
         while (1) {
           Display.printCentered(F("SENSORES"), 0, 0);
@@ -346,7 +346,7 @@ class Reading {
           if (analogRead((uint8_t)pgm_read_word_near(FIRST_IR_SENSOR_PIN[0])) < 120) {
             Data.sensorTimestamps[Data.currentReading][1] = millis();
 
-            Serial.println(F("MedidorVMM :: PRIMEIRO SENSOR INTERROMPIDO."));
+            Serial.println(F("AEMF :: PRIMEIRO SENSOR INTERROMPIDO."));
             Display.printCentered(F("PRIMEIRO IR"), 0, 0);
             // Display.printCentered(F("INTERROMPIDO."), 1, 0);
 
@@ -354,7 +354,7 @@ class Reading {
               if (analogRead((uint8_t)pgm_read_word_near(SECOND_IR_SENSOR_PIN[0])) < 120) {
                 Data.sensorTimestamps[Data.currentReading][2] = millis();
 
-                Serial.println(F("MedidorVMM :: SEGUNDO SENSOR INTERROMPIDO."));
+                Serial.println(F("AEMF :: SEGUNDO SENSOR INTERROMPIDO."));
                 Display.printCentered(F("SEGUNDO IR"), 0, 0);
                 // Display.printCentered(F("INTERROMPIDO."), 1, 0);
 
@@ -362,7 +362,7 @@ class Reading {
                   if (analogRead((uint8_t)pgm_read_word_near(THIRD_IR_SENSOR_PIN[0])) < 120) {
                     Data.sensorTimestamps[Data.currentReading][3] = millis();
 
-                    Serial.println(F("MedidorVMM :: TERCEIRO SENSOR INTERROMPIDO."));
+                    Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO."));
                     Display.printCentered(F("TERCEIRO IR"), 0, 0);
                     // Display.printCentered(F("INTERROMPIDO."), 1, 0);
                     ReleaseGate.close();
@@ -370,9 +370,9 @@ class Reading {
                     Display.printCentered(F("PROCESSANDO"), 1, 0);
                     // Display.printCentered(F("E CALCULANDO."), 1, 0);
 
-                    // Serial.println(F("\nMedidorVMM :: INICIANDO CALCULO DOS DADOS.\n"));
+                    // Serial.println(F("\nAEMF :: INICIANDO CALCULO DOS DADOS.\n"));
 
-                    Serial.println(F("MedidorVMM :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
+                    Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
 
                     // Adjust position value to sensor center
                     Data.sensorPosition[Data.currentReading][0] += 15.5;
@@ -385,20 +385,20 @@ class Reading {
                     Data.distanceVariation[Data.currentReading][2] = Data.sensorPosition[Data.currentReading][2] - Data.sensorPosition[Data.currentReading][1];  // S3 - S2
                     Data.distanceVariation[Data.currentReading][3] = Data.sensorPosition[Data.currentReading][2];                                                // S3 - LG
 
-                    Serial.println(F("MedidorVMM :: CALCULADO VARIAÇÃO DE TEMPO."));
+                    Serial.println(F("AEMF :: CALCULADO VARIAÇÃO DE TEMPO."));
                     Data.timeIntervals[Data.currentReading][0] = Data.sensorTimestamps[Data.currentReading][1] - Data.sensorTimestamps[Data.currentReading][0];  // S1 - LG
                     Data.timeIntervals[Data.currentReading][1] = Data.sensorTimestamps[Data.currentReading][2] - Data.sensorTimestamps[Data.currentReading][1];  // S2 - S1
                     Data.timeIntervals[Data.currentReading][2] = Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][2];  // S3 - S2
                     Data.timeIntervals[Data.currentReading][3] = Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][0];  // S3 - LG
 
-                    Serial.println(F("MedidorVMM :: CALCULANDO VELOCIDADE MÉDIA."));
+                    Serial.println(F("AEMF :: CALCULANDO VELOCIDADE MÉDIA."));
                     Data.meanVelocity[Data.currentReading][0] = Data.distanceVariation[Data.currentReading][0] / (Data.timeIntervals[Data.currentReading][0] / float(1000));  // S1 - LG
                     Data.meanVelocity[Data.currentReading][1] = Data.distanceVariation[Data.currentReading][1] / (Data.timeIntervals[Data.currentReading][1] / float(1000));  // S2 - S1
                     Data.meanVelocity[Data.currentReading][2] = Data.distanceVariation[Data.currentReading][2] / (Data.timeIntervals[Data.currentReading][2] / float(1000));  // S3 - S2
                     Data.meanVelocity[Data.currentReading][3] = Data.distanceVariation[Data.currentReading][3] / (Data.timeIntervals[Data.currentReading][3] / float(1000));  // S3 - LG
 
-                    Serial.println(F("MedidorVMM :: DADOS PROCESSADOS E CALCULADOS."));
-                    Serial.println(F("MedidorVMM :: PROCESSAMENTO COMPLETO.\n"));
+                    Serial.println(F("AEMF :: DADOS PROCESSADOS E CALCULADOS."));
+                    Serial.println(F("AEMF :: PROCESSAMENTO COMPLETO.\n"));
                     Display.printCentered(F("LEITURA"), 0, 0);
                     Display.printCentered(F("COMPLETA."), 1, 0);
                     Data.increaseReading();
