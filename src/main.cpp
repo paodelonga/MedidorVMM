@@ -416,12 +416,19 @@ class Reading {
   void display() {
     String _top = (String)F("|======= LEITURA =======|");
 
-    String messages[17] = {
+    String messages[25] = {
+        "",
         F("Variação de Distancia"),
         (String)F("Primeira: ") + Data.distanceVariation[Data.prevReading][0] + F("cm"),
         (String)F("Segunda: ") + Data.distanceVariation[Data.prevReading][1] + F("cm"),
         (String)F("Terceira: ") + Data.distanceVariation[Data.prevReading][2] + F("cm"),
         (String)F("Total: ") + Data.distanceVariation[Data.prevReading][3] + F("cm"),
+        "",
+        F("Tempo do Sensor"),
+        (String)F("Primeiro: ") + Data.sensorTimestamps[Data.prevReading][0] + F("ms"),
+        (String)F("Segundo: ") + Data.sensorTimestamps[Data.prevReading][1] + F("ms"),
+        (String)F("Terceiro: ") + Data.sensorTimestamps[Data.prevReading][2] + F("ms"),
+        (String)F("Total: ") + Data.sensorTimestamps[Data.prevReading][3] + F("ms"),
         "",
         F("Intervalo de Tempo"),
         (String)F("Primeiro: ") + Data.timeIntervals[Data.prevReading][0] + F("ms"),
@@ -437,7 +444,7 @@ class Reading {
     };
 
     Serial.println(_top);
-    for (byte line = 0; line < 17; line++) {
+    for (byte line = 0; line < 25; line++) {
       for (byte line_size = 0; line_size < (abs(_top.length() - messages[line].length()) / 2); line_size++) {
         Serial.print(F(" "));
         delay(10);
@@ -590,16 +597,17 @@ class Menu {
    public:
     static const byte _STANDBY = 0;
     static const byte _MIN_PAGE = 1;
-    static const byte _MAX_PAGE = 3;
+    static const byte _MAX_PAGE = 4;
     static const byte _MIN_SUBPAGE = 0;
     static const byte _MAX_SUBPAGE = 1;
     byte _SELECTED_PAGE;
     byte _FOCUSED_PAGE;
     byte _FOCUSED_SUBPAGE;
 
-    const char *_PAGE_LABELS[4][2] = {
+    const char *_PAGE_LABELS[5][2] = {
         {},
         {"VARIACAO DE", "DISTANCIA (CM)"},
+        {"TEMPO DO", "SENSOR (MS)"},
         {"INTERVALO DE", "TEMPO (MS)"},
         {"VELOCIDADE", "MEDIA (CM/S)"}};
 
@@ -610,20 +618,25 @@ class Menu {
 
     void displayFocusedSubpage() {
       _SELECTED_PAGE = _FOCUSED_PAGE;
-      String _SUB_PAGE_LABEL[5][4] = {
+      String _SUB_PAGE_LABEL[6][4] = {
           {},
-          {(String) "V1: " + Reading.Data.distanceVariation[Reading.Data.prevReading][0],
-           (String) "V2: " + Reading.Data.distanceVariation[Reading.Data.prevReading][1],
-           (String) "V3: " + Reading.Data.distanceVariation[Reading.Data.prevReading][2],
-           (String) "V4: " + Reading.Data.distanceVariation[Reading.Data.prevReading][3]},
-          {(String) "I1 " + Reading.Data.timeIntervals[Reading.Data.prevReading][0],
-           (String) "I2 " + Reading.Data.timeIntervals[Reading.Data.prevReading][1],
-           (String) "I3 " + Reading.Data.timeIntervals[Reading.Data.prevReading][2],
-           (String) "I4 " + Reading.Data.timeIntervals[Reading.Data.prevReading][3]},
-          {(String) "V1 " + Reading.Data.meanVelocity[Reading.Data.prevReading][0],
-           (String) "V2 " + Reading.Data.meanVelocity[Reading.Data.prevReading][1],
-           (String) "V3 " + Reading.Data.meanVelocity[Reading.Data.prevReading][2],
-           (String) "V4 " + Reading.Data.meanVelocity[Reading.Data.prevReading][3]}};
+          {(String) "VD1: " + Reading.Data.distanceVariation[Reading.Data.prevReading][0],
+           (String) "VD2: " + Reading.Data.distanceVariation[Reading.Data.prevReading][1],
+           (String) "VD3: " + Reading.Data.distanceVariation[Reading.Data.prevReading][2],
+           (String) "VD4: " + Reading.Data.distanceVariation[Reading.Data.prevReading][3]},
+          {(String) "TS1 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][0],
+           (String) "TS2 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][1],
+           (String) "TS3 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][2],
+           (String) "TS4 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][3]},
+          {(String) "IT1 " + Reading.Data.timeIntervals[Reading.Data.prevReading][0],
+           (String) "IT2 " + Reading.Data.timeIntervals[Reading.Data.prevReading][1],
+           (String) "IT3 " + Reading.Data.timeIntervals[Reading.Data.prevReading][2],
+           (String) "IT4 " + Reading.Data.timeIntervals[Reading.Data.prevReading][3]},
+          {(String) "VM1 " + Reading.Data.meanVelocity[Reading.Data.prevReading][0],
+           (String) "VM2 " + Reading.Data.meanVelocity[Reading.Data.prevReading][1],
+           (String) "VM3 " + Reading.Data.meanVelocity[Reading.Data.prevReading][2],
+           (String) "VM4 " + Reading.Data.meanVelocity[Reading.Data.prevReading][3]}};
+
       if (_FOCUSED_SUBPAGE == _MIN_SUBPAGE) {
         Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][0], 0, 0);
         Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][1], 1, 0);
@@ -698,7 +711,7 @@ class Menu {
         _SELECTED_MENU = _DISPLAY;
         DisplayPage._FOCUSED_PAGE = DisplayPage._MIN_PAGE;
         DisplayPage.displayFocusedPage();
-        // Reading.display();
+        Reading.display();
         break;
       case _PREFERENCES:
         _SELECTED_MENU = _PREFERENCES;
@@ -874,11 +887,3 @@ void setup() {
 void loop() {
   Menu.loop();
 }
-
-/*
-
-fix: the next, current and prev reading problem between display and reading
-fix: memory overloading
-feat: switch between saved reads
-fix: warnings during compilation
-*/
