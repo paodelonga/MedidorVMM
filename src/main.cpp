@@ -7,10 +7,10 @@
 LiquidCrystal LiquidCrystal(8, 9, 4, 5, 6, 7);
 Servo Servo;
 
-const PROGMEM uint8_t FIRST_IR_SENSOR_PIN[1] = {1};
-const PROGMEM uint8_t SECOND_IR_SENSOR_PIN[1] = {2};
-const PROGMEM uint8_t THIRD_IR_SENSOR_PIN[1] = {3};
-const PROGMEM uint8_t RELEASE_GATE_PIN[1] = {5};
+#define FIRST_IR_SENSOR_PIN A1
+#define SECOND_IR_SENSOR_PIN A2
+#define THIRD_IR_SENSOR_PIN A3
+#define RELEASE_GATE_PIN A4
 
 class Display {
  public:
@@ -158,8 +158,8 @@ class Properties {
   void begin() {
     const char *AUTHORS_FULLNAME[2] = {"Jotaquerles do Nascimento França", "Abiel Mendes dos Santos"};
     const char *AUTHORS_SURNAME[2] = {"Jotaquerles N", "Abiel M"};
-    const char *VERSION = "1.0.0";
-    const char *REVISION_DATE = "Sunday, 29 October, 2023; 29/10/2023 - 07:39:36";
+    const char *VERSION = "2.0.0";
+    const char *REVISION_DATE = "Saturday, 04 November, 2023; 04/11/2023 - 19:05:50";
     const char *REPO_URL = "https://github.com/paodelonga/aemf-01";
 
     Display.printWait(F("Autores"), 0, 0);
@@ -343,7 +343,7 @@ class Reading {
           Display.printCentered(F("SENSORES"), 0, 0);
           Display.printCentered(F("INICIADOS."), 1, 0);
 
-          if (analogRead((uint8_t)pgm_read_word_near(FIRST_IR_SENSOR_PIN[0])) < 120) {
+          if (analogRead(FIRST_IR_SENSOR_PIN) < 120) {
             Data.sensorTimestamps[Data.currentReading][1] = millis();
 
             Serial.println(F("AEMF :: PRIMEIRO SENSOR INTERROMPIDO."));
@@ -351,7 +351,7 @@ class Reading {
             // Display.printCentered(F("INTERROMPIDO."), 1, 0);
 
             while (1) {
-              if (analogRead((uint8_t)pgm_read_word_near(SECOND_IR_SENSOR_PIN[0])) < 120) {
+              if (analogRead(SECOND_IR_SENSOR_PIN) < 120) {
                 Data.sensorTimestamps[Data.currentReading][2] = millis();
 
                 Serial.println(F("AEMF :: SEGUNDO SENSOR INTERROMPIDO."));
@@ -359,7 +359,7 @@ class Reading {
                 // Display.printCentered(F("INTERROMPIDO."), 1, 0);
 
                 while (1) {
-                  if (analogRead((uint8_t)pgm_read_word_near(THIRD_IR_SENSOR_PIN[0])) < 120) {
+                  if (analogRead(THIRD_IR_SENSOR_PIN) < 120) {
                     Data.sensorTimestamps[Data.currentReading][3] = millis();
 
                     Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO."));
@@ -855,9 +855,9 @@ class Menu {
 
 // cppcheck-suppress unusedFunction
 void setup() {
-  pinMode((uint8_t)pgm_read_word_near(FIRST_IR_SENSOR_PIN[0]), INPUT);
-  pinMode((uint8_t)pgm_read_word_near(SECOND_IR_SENSOR_PIN[0]), INPUT);
-  pinMode((uint8_t)pgm_read_word_near(THIRD_IR_SENSOR_PIN[0]), INPUT);
+  pinMode(FIRST_IR_SENSOR_PIN, INPUT);
+  pinMode(SECOND_IR_SENSOR_PIN, INPUT);
+  pinMode(THIRD_IR_SENSOR_PIN, INPUT);
 
   Display.begin(16, 2);
   Serial.begin(115200);
@@ -866,7 +866,7 @@ void setup() {
     delay(250);
   }
 
-  ReleaseGate.begin((uint8_t)pgm_read_word_near(RELEASE_GATE_PIN[0]));
+  ReleaseGate.begin(RELEASE_GATE_PIN);
   Properties.begin();
 }
 
