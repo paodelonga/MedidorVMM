@@ -375,10 +375,10 @@ class Reading {
                     Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
 
                     // Adjust position value to sensor center
-                    Data.sensorPosition[Data.currentReading][0] += 15.5;
-                    Data.sensorPosition[Data.currentReading][1] += 15.5;
-                    Data.sensorPosition[Data.currentReading][2] += 15.5;
-                    Data.sensorPosition[Data.currentReading][2] += 15.5;
+                    Data.sensorPosition[Data.currentReading][0] += 11.6;
+                    Data.sensorPosition[Data.currentReading][1] += 11.6;
+                    Data.sensorPosition[Data.currentReading][2] += 11.6;
+                    Data.sensorPosition[Data.currentReading][2] += 11.6;
 
                     Data.distanceVariation[Data.currentReading][0] = Data.sensorPosition[Data.currentReading][0];                                                // S1 - LG
                     Data.distanceVariation[Data.currentReading][1] = Data.sensorPosition[Data.currentReading][1] - Data.sensorPosition[Data.currentReading][0];  // S2 - S1
