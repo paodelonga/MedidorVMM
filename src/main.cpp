@@ -278,7 +278,7 @@ class Reading {
     byte currentReading = 1;
     byte prevReading = 0;
 
-    double sensorPosition[maxReading][3];
+    double sensorPosition[3];
     double sensorTimestamps[maxReading][4];
     double timeIntervals[maxReading][4];
     double meanVelocity[maxReading][4];
@@ -348,7 +348,6 @@ class Reading {
 
             Serial.println(F("AEMF :: PRIMEIRO SENSOR INTERROMPIDO."));
             Display.printCentered(F("PRIMEIRO IR"), 0, 0);
-            // Display.printCentered(F("INTERROMPIDO."), 1, 0);
 
             while (1) {
               if (analogRead(SECOND_IR_SENSOR_PIN) < 120) {
@@ -356,7 +355,6 @@ class Reading {
 
                 Serial.println(F("AEMF :: SEGUNDO SENSOR INTERROMPIDO."));
                 Display.printCentered(F("SEGUNDO IR"), 0, 0);
-                // Display.printCentered(F("INTERROMPIDO."), 1, 0);
 
                 while (1) {
                   if (analogRead(THIRD_IR_SENSOR_PIN) < 120) {
@@ -364,7 +362,6 @@ class Reading {
 
                     Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO."));
                     Display.printCentered(F("TERCEIRO IR"), 0, 0);
-                    // Display.printCentered(F("INTERROMPIDO."), 1, 0);
                     ReleaseGate.close();
 
                     Display.printCentered(F("PROCESSANDO"), 1, 0);
@@ -375,15 +372,14 @@ class Reading {
                     Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
 
                     // Adjust position value to sensor center
-                    Data.sensorPosition[Data.currentReading][0] += 11.6;
-                    Data.sensorPosition[Data.currentReading][1] += 11.6;
-                    Data.sensorPosition[Data.currentReading][2] += 11.6;
-                    Data.sensorPosition[Data.currentReading][2] += 11.6;
+                    Data.sensorPosition[0] += 0.11;
+                    Data.sensorPosition[1] += 0.11;
+                    Data.sensorPosition[2] += 0.11;
 
-                    Data.distanceVariation[Data.currentReading][0] = Data.sensorPosition[Data.currentReading][0];                                                // S1 - LG
-                    Data.distanceVariation[Data.currentReading][1] = Data.sensorPosition[Data.currentReading][1] - Data.sensorPosition[Data.currentReading][0];  // S2 - S1
-                    Data.distanceVariation[Data.currentReading][2] = Data.sensorPosition[Data.currentReading][2] - Data.sensorPosition[Data.currentReading][1];  // S3 - S2
-                    Data.distanceVariation[Data.currentReading][3] = Data.sensorPosition[Data.currentReading][2];                                                // S3 - LG
+                    Data.distanceVariation[Data.currentReading][0] = Data.sensorPosition[0];                           // S1 - LG
+                    Data.distanceVariation[Data.currentReading][1] = Data.sensorPosition[1] - Data.sensorPosition[0];  // S2 - S1
+                    Data.distanceVariation[Data.currentReading][2] = Data.sensorPosition[2] - Data.sensorPosition[1];  // S3 - S2
+                    Data.distanceVariation[Data.currentReading][3] = Data.sensorPosition[2];                           // S3 - LG
 
                     Serial.println(F("AEMF :: CALCULADO VARIAÇÃO DE TEMPO."));
                     Data.timeIntervals[Data.currentReading][0] = Data.sensorTimestamps[Data.currentReading][1] - Data.sensorTimestamps[Data.currentReading][0];  // S1 - LG
@@ -437,10 +433,10 @@ class Reading {
         (String)F("Total: ") + Data.timeIntervals[Data.prevReading][3] + F("ms"),
         "",
         F("Velocidade Média"),
-        (String)F("Primeira: ") + Data.meanVelocity[Data.prevReading][0] + F("cm/ms"),
-        (String)F("Segunda: ") + Data.meanVelocity[Data.prevReading][1] + F("cm/ms"),
-        (String)F("Terceira: ") + Data.meanVelocity[Data.prevReading][2] + F("cm/ms"),
-        (String)F("Total: ") + Data.meanVelocity[Data.prevReading][3] + F("cm/ms"),
+        (String)F("Primeira: ") + Data.meanVelocity[Data.prevReading][0] + F("cm/s"),
+        (String)F("Segunda: ") + Data.meanVelocity[Data.prevReading][1] + F("cm/s"),
+        (String)F("Terceira: ") + Data.meanVelocity[Data.prevReading][2] + F("cm/s"),
+        (String)F("Total: ") + Data.meanVelocity[Data.prevReading][3] + F("cm/s"),
     };
 
     Serial.println(_top);
@@ -484,29 +480,29 @@ class Menu {
     void displayFocusedPref() {
       Display.printCentered((String)_OPTIONS_LABEL[_FOCUSED_PREFS], 0, 0);
       if (_FOCUSED_PREFS == 1) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]), 1, 0);
+        Display.printCentered(String(Reading.Data.sensorPosition[0]), 1, 0);
 
       } else if (_FOCUSED_PREFS == 2) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]), 1, 0);
+        Display.printCentered(String(Reading.Data.sensorPosition[1]), 1, 0);
 
       } else if (_FOCUSED_PREFS == 3) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][2]), 1, 0);
+        Display.printCentered(String(Reading.Data.sensorPosition[2]), 1, 0);
       }
     }
 
     void displaySelectedPref() {
       Display.printCentered((String)_OPTIONS_LABEL[_FOCUSED_PREFS], 0, 0);
       if (_FOCUSED_PREFS == 1) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]), 1, 0);
-        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[Reading.Data.currentReading][0]).length()) / 2, 1);
+        Display.printCentered(String(Reading.Data.sensorPosition[0]), 1, 0);
+        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[0]).length()) / 2, 1);
 
       } else if (_FOCUSED_PREFS == 2) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]), 1, 0);
-        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[Reading.Data.currentReading][1]).length()) / 2, 1);
+        Display.printCentered(String(Reading.Data.sensorPosition[1]), 1, 0);
+        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[1]).length()) / 2, 1);
 
       } else if (_FOCUSED_PREFS == 3) {
-        Display.printCentered(String(Reading.Data.sensorPosition[Reading.Data.currentReading][2]), 1, 0);
-        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[Reading.Data.currentReading][2]).length()) / 2, 1);
+        Display.printCentered(String(Reading.Data.sensorPosition[2]), 1, 0);
+        Display.drawChar(Display.selectedMark, (15 - String(Reading.Data.sensorPosition[2]).length()) / 2, 1);
       }
     }
 
@@ -517,36 +513,36 @@ class Menu {
 
     void increasePrefValue(float inc) {
       if (_FOCUSED_PREFS == 1) {
-        if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 75) {
-          if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 20) {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 20;
+        if (Reading.Data.sensorPosition[0] < 75) {
+          if (Reading.Data.sensorPosition[0] < 20) {
+            Reading.Data.sensorPosition[0] = 20;
           } else {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][0] += inc;
+            Reading.Data.sensorPosition[0] += inc;
           }
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 20;
+          Reading.Data.sensorPosition[0] = 20;
         }
 
       } else if (_FOCUSED_PREFS == 2) {
-        if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 80) {
-          if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 25) {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 25;
+        if (Reading.Data.sensorPosition[1] < 80) {
+          if (Reading.Data.sensorPosition[1] < 25) {
+            Reading.Data.sensorPosition[1] = 25;
           } else {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][1] += inc;
+            Reading.Data.sensorPosition[1] += inc;
           }
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 25;
+          Reading.Data.sensorPosition[1] = 25;
         }
 
       } else if (_FOCUSED_PREFS == 3) {
-        if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 85 {
-          if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 30) {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 30;
+        if (Reading.Data.sensorPosition[2] < 85) {
+          if (Reading.Data.sensorPosition[2] < 30) {
+            Reading.Data.sensorPosition[2] = 30;
           } else {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][2] += inc;
+            Reading.Data.sensorPosition[2] += inc;
           }
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 30;
+          Reading.Data.sensorPosition[2] = 30;
         }
       }
       displaySelectedPref();
@@ -554,23 +550,23 @@ class Menu {
 
     void decreasePrefValue(float dec) {
       if (_FOCUSED_PREFS == 1) {
-        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][0] -= dec) < 20) {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 75;
+        if ((Reading.Data.sensorPosition[0] -= dec) < 20) {
+          Reading.Data.sensorPosition[0] = 75;
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][0] -= dec;
+          Reading.Data.sensorPosition[0] -= dec;
         }
       } else if (_FOCUSED_PREFS == 2) {
-        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][1] -= dec) < 25) {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 80;
+        if ((Reading.Data.sensorPosition[1] -= dec) < 25) {
+          Reading.Data.sensorPosition[1] = 80;
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][1] -= dec;
+          Reading.Data.sensorPosition[1] -= dec;
         }
 
       } else if (_FOCUSED_PREFS == 3) {
-        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][2] -= dec) < 30) {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 85;
+        if ((Reading.Data.sensorPosition[2] -= dec) < 30) {
+          Reading.Data.sensorPosition[2] = 85;
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][2] -= dec;
+          Reading.Data.sensorPosition[2] -= dec;
         }
       }
       displaySelectedPref();
@@ -859,7 +855,7 @@ class Menu {
       }
     }
 
-    if (millis() > (switcherTime + 10000) and _SELECTED_MENU == _STANDBY) {
+    if (uint16_t(millis()) > uint16_t(switcherTime + 10000) and _SELECTED_MENU == _STANDBY) {
       _FOCUSED_MENU = _STANDBY;
       switcherTime = millis();
     }
