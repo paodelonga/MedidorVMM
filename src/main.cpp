@@ -280,7 +280,6 @@ class Reading {
     double timeIntervals[4];
     double meanVelocity[4];
     double distanceVariation[4];
-
   } Data;
 
   void read() {
@@ -359,15 +358,10 @@ class Reading {
 
                     Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
 
-                    // Adjust position value to sensor center
-                    Data.sensorPosition[0] += 0.11;
-                    Data.sensorPosition[1] += 0.11;
-                    Data.sensorPosition[2] += 0.11;
-
-                    Data.distanceVariation[0] = Data.sensorPosition[0];                           // S1 - LG
-                    Data.distanceVariation[1] = Data.sensorPosition[1] - Data.sensorPosition[0];  // S2 - S1
-                    Data.distanceVariation[2] = Data.sensorPosition[2] - Data.sensorPosition[1];  // S3 - S2
-                    Data.distanceVariation[3] = Data.sensorPosition[2];                           // S3 - LG
+                    Data.distanceVariation[0] = Data.sensorPosition[0] + 0.11;                                      // S1 - LG
+                    Data.distanceVariation[1] = (Data.sensorPosition[1] + 0.11) - (Data.sensorPosition[0] + 0.11);  // S2 - S1
+                    Data.distanceVariation[2] = (Data.sensorPosition[2] + 0.11) - (Data.sensorPosition[1] + 0.11);  // S3 - S2
+                    Data.distanceVariation[3] = Data.sensorPosition[2];                                             // S3 - LG
 
                     Serial.println(F("AEMF :: CALCULADO VARIAÇÃO DE TEMPO."));
                     Data.timeIntervals[0] = Data.sensorTimestamps[1] - Data.sensorTimestamps[0];  // S1 - LG
@@ -397,15 +391,14 @@ class Reading {
   }
 
   void display() {
-    String _top = (String)F("|======= LEITURA =======|");
+    String _top = (String)F("|========= LEITURA =========|");
 
-    String messages[25] = {
+    String messages[30] = {
         "",
-        F("Variação de Distancia"),
-        (String)F("Primeira: ") + Data.distanceVariation[0] + F("cm"),
-        (String)F("Segunda: ") + Data.distanceVariation[1] + F("cm"),
-        (String)F("Terceira: ") + Data.distanceVariation[2] + F("cm"),
-        (String)F("Total: ") + Data.distanceVariation[3] + F("cm"),
+        F("Posicao do Sensor"),
+        (String)F("Primeiro: ") + (Data.sensorPosition[0] + 0.11) + F("cm"),
+        (String)F("Segundo: ") + (Data.sensorPosition[1] + 0.11) + F("cm"),
+        (String)F("Terceiro: ") + (Data.sensorPosition[2] + 0.11) + F("cm"),
         "",
         F("Tempo do Sensor"),
         (String)F("Primeiro: ") + Data.sensorTimestamps[0] + F("ms"),
@@ -413,13 +406,19 @@ class Reading {
         (String)F("Terceiro: ") + Data.sensorTimestamps[2] + F("ms"),
         (String)F("Total: ") + Data.sensorTimestamps[3] + F("ms"),
         "",
+        F("Variacao de Distancia"),
+        (String)F("Primeira: ") + Data.distanceVariation[0] + F("cm"),
+        (String)F("Segunda: ") + Data.distanceVariation[1] + F("cm"),
+        (String)F("Terceira: ") + Data.distanceVariation[2] + F("cm"),
+        (String)F("Total: ") + Data.distanceVariation[3] + F("cm"),
+        "",
         F("Intervalo de Tempo"),
         (String)F("Primeiro: ") + Data.timeIntervals[0] + F("ms"),
         (String)F("Segundo: ") + Data.timeIntervals[1] + F("ms"),
         (String)F("Terceiro: ") + Data.timeIntervals[2] + F("ms"),
         (String)F("Total: ") + Data.timeIntervals[3] + F("ms"),
         "",
-        F("Velocidade Média"),
+        F("Velocidade Media"),
         (String)F("Primeira: ") + Data.meanVelocity[0] + F("cm/s"),
         (String)F("Segunda: ") + Data.meanVelocity[1] + F("cm/s"),
         (String)F("Terceira: ") + Data.meanVelocity[2] + F("cm/s"),
@@ -427,7 +426,7 @@ class Reading {
     };
 
     Serial.println(_top);
-    for (byte line = 0; line < 25; line++) {
+    for (byte line = 0; line < 30; line++) {
       for (byte line_size = 0; line_size < (abs(_top.length() - messages[line].length()) / 2); line_size++) {
         Serial.print(F(" "));
         delay(10);
@@ -587,10 +586,11 @@ class Menu {
     byte _FOCUSED_PAGE;
     byte _FOCUSED_SUBPAGE;
 
-    const char *_PAGE_LABELS[5][2] = {
+    const char *_PAGE_LABELS[7][2] = {
         {},
-        {"VARIACAO DE", "DISTANCIA (CM)"},
+        {"POSICAO DO", "SENSOR (CM)"},
         {"TEMPO DO", "SENSOR (MS)"},
+        {"VARIACAO DE", "DISTANCIA (CM)"},
         {"INTERVALO DE", "TEMPO (MS)"},
         {"VELOCIDADE", "MEDIA (CM/S)"}};
 
@@ -601,20 +601,27 @@ class Menu {
 
     void displayFocusedSubpage() {
       _SELECTED_PAGE = _FOCUSED_PAGE;
-      String _SUB_PAGE_LABEL[6][4] = {
+      String _SUB_PAGE_LABEL[7][4] = {
           {},
-          {(String) "VD1: " + Reading.Data.distanceVariation[0],
-           (String) "VD2: " + Reading.Data.distanceVariation[1],
-           (String) "VD3: " + Reading.Data.distanceVariation[2],
-           (String) "VD4: " + Reading.Data.distanceVariation[3]},
+          {(String) "POS1 " + (Reading.Data.sensorPosition[0] + 0.11),
+           (String) "POS2 " + (Reading.Data.sensorPosition[1] + 0.11),
+           (String) "POS3 " + (Reading.Data.sensorPosition[2] + 0.11),
+           (String) "NO SENSOR"},
           {(String) "TS1 " + Reading.Data.sensorTimestamps[0],
            (String) "TS2 " + Reading.Data.sensorTimestamps[1],
            (String) "TS3 " + Reading.Data.sensorTimestamps[2],
            (String) "TS4 " + Reading.Data.sensorTimestamps[3]},
+
+          {(String) "VD1: " + Reading.Data.distanceVariation[0],
+           (String) "VD2: " + Reading.Data.distanceVariation[1],
+           (String) "VD3: " + Reading.Data.distanceVariation[2],
+           (String) "VD4: " + Reading.Data.distanceVariation[3]},
+
           {(String) "IT1 " + Reading.Data.timeIntervals[0],
            (String) "IT2 " + Reading.Data.timeIntervals[1],
            (String) "IT3 " + Reading.Data.timeIntervals[2],
            (String) "IT4 " + Reading.Data.timeIntervals[3]},
+
           {(String) "VM1 " + Reading.Data.meanVelocity[0],
            (String) "VM2 " + Reading.Data.meanVelocity[1],
            (String) "VM3 " + Reading.Data.meanVelocity[2],
@@ -694,12 +701,13 @@ class Menu {
         _SELECTED_MENU = _DISPLAY;
         DisplayPage._FOCUSED_PAGE = DisplayPage._MIN_PAGE;
         DisplayPage.displayFocusedPage();
-        Reading.display();
+        if (Serial){ Reading.display(); }
         break;
       case _PREFERENCES:
         _SELECTED_MENU = _PREFERENCES;
         Options._FOCUSED_PREFS = Options._MIN_PREFS;
         Options.displayFocusedPref();
+
         break;
     }
   }
@@ -751,7 +759,7 @@ class Menu {
 
       // Aumenta a valor decimal de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
-        Options.increasePrefValue(0.01);
+        Options.decreasePrefValue(0.01);
         delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
@@ -819,7 +827,7 @@ class Menu {
 
       // Diminui o valor inteiro de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
-        Options.decreasePrefValue(1.00);
+        Options.increasePrefValue(1.00);
         delay(90);
       }
 
