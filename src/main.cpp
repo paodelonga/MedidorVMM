@@ -171,9 +171,6 @@ class Properties {
     Serial.print(F("AEMF :: Autores: "));
     Serial.println(AUTHORS_FULLNAME[1]);
 
-    Serial.print(F("AEMF :: Versao: "));
-    Serial.println(VERSION);
-
     Display.printWait((String)F("VERSAO: ") + VERSION, 0, 1);
 
     Serial.print(F("AEMF :: Revisao: "));
@@ -184,6 +181,9 @@ class Properties {
 
     Serial.print(F("AEMF :: Repositorio: "));
     Serial.println(REPO_URL);
+
+    Serial.print(F("AEMF :: Versao: "));
+    Serial.println(VERSION);
 
     Serial.println(F(""));
 
@@ -218,7 +218,7 @@ class KeypadButtons {
 
   int Pressed() {
     buttonValue = analogRead(0);
-    if (buttonValue > 0 and buttonValue < 50) {
+    if (buttonValue < 50) {
       pressedValue = Right;
     } else if (buttonValue > 50 and buttonValue < 250) {
       pressedValue = Up;
@@ -286,7 +286,7 @@ class Reading {
     ReleaseGate.open();
 
     Serial.println(F("AEMF :: PARA INICIAR POSICIONE O OBJETO"));
-    Serial.println(F("AEMF :: E PRESSIONE RIGHT PARA RETENCAO."));
+    Serial.println(F("AEMF :: E PRESSIONE RIGHT PARA RETENCAO.\n"));
 
     long messageTimer = millis();
     byte messageIndex = 0;
@@ -310,7 +310,7 @@ class Reading {
 
       if (KeypadButtons.Pressed() == KeypadButtons.Right) {
         ReleaseGate.close();
-        Serial.println(F("AEMF :: OBJETO RETIDO"));
+        Serial.println(F("AEMF :: OBJETO RETIDO!"));
 
         for (byte seconds = random(0, 10); seconds > 0; seconds--) {
           Serial.print(F("AEMF :: LIBERANDO OBJETO EM: "));
@@ -321,42 +321,41 @@ class Reading {
           delay(1000);
         }
 
-        Serial.println(F("AEMF :: INICIANDO LEITURA DOS SENSORES."));
+        Serial.println(F("AEMF :: INICIANDO LEITURA DOS SENSORES.\n"));
         ReleaseGate.open();
         Data.sensorTimestamps[0] = millis();
-        Serial.println(F("AEMF :: OBJETO LIBERADO."));
 
         while (1) {
           Display.printCentered(F("SENSORES"), 0, 0);
           Display.printCentered(F("INICIADOS."), 1, 0);
 
-          if (analogRead(FIRST_IR_SENSOR_PIN) < 120) {
+          if (analogRead(FIRST_IR_SENSOR_PIN) < 600) {
             Data.sensorTimestamps[1] = millis();
 
             Serial.println(F("AEMF :: PRIMEIRO SENSOR INTERROMPIDO."));
             Display.printCentered(F("PRIMEIRO IR"), 0, 0);
 
             while (1) {
-              if (analogRead(SECOND_IR_SENSOR_PIN) < 120) {
+              if (analogRead(SECOND_IR_SENSOR_PIN) < 600) {
                 Data.sensorTimestamps[2] = millis();
 
                 Serial.println(F("AEMF :: SEGUNDO SENSOR INTERROMPIDO."));
                 Display.printCentered(F("SEGUNDO IR"), 0, 0);
 
                 while (1) {
-                  if (analogRead(THIRD_IR_SENSOR_PIN) < 120) {
+                  if (analogRead(THIRD_IR_SENSOR_PIN) < 600) {
                     Data.sensorTimestamps[3] = millis();
 
-                    Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO."));
+                    Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO.\n"));
                     Display.printCentered(F("TERCEIRO IR"), 0, 0);
                     ReleaseGate.close();
 
-                    Display.printCentered(F("PROCESSANDO"), 1, 0);
-                    // Display.printCentered(F("E CALCULANDO."), 1, 0);
+                    Display.printCentered(F("PROCESSANDO"), 0, 0);
+                    Display.printCentered(F("A LEITURA."), 1, 0);
 
-                    // Serial.println(F("\nAEMF :: INICIANDO CALCULO DOS DADOS.\n"));
+                    Serial.println(F("AEMF :: INICIANDO CALCULO DOS DADOS."));
 
-                    Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO.\n"));
+                    Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO."));
 
                     Data.distanceVariation[0] = Data.sensorPosition[0] + 0.11;                                      // S1 - LG
                     Data.distanceVariation[1] = (Data.sensorPosition[1] + 0.11) - (Data.sensorPosition[0] + 0.11);  // S2 - S1
@@ -377,6 +376,9 @@ class Reading {
 
                     Serial.println(F("AEMF :: DADOS PROCESSADOS E CALCULADOS."));
                     Serial.println(F("AEMF :: PROCESSAMENTO COMPLETO.\n"));
+
+                    Serial.println(F("AEMF :: PRESSIONE SELECT E SELICIONE"));
+                    Serial.println(F("AEMF :: O MODO DE EXIBICAO PARA VISUALIZAR OS DADOS.\n"));
                     Display.printCentered(F("LEITURA"), 0, 0);
                     Display.printCentered(F("COMPLETA."), 1, 0);
                     return;
@@ -423,6 +425,7 @@ class Reading {
         (String)F("Segunda: ") + Data.meanVelocity[1] + F("cm/s"),
         (String)F("Terceira: ") + Data.meanVelocity[2] + F("cm/s"),
         (String)F("Total: ") + Data.meanVelocity[3] + F("cm/s"),
+        "",
     };
 
     Serial.println(_top);
@@ -579,7 +582,7 @@ class Menu {
    public:
     static const byte _STANDBY = 0;
     static const byte _MIN_PAGE = 1;
-    static const byte _MAX_PAGE = 4;
+    static const byte _MAX_PAGE = 5;
     static const byte _MIN_SUBPAGE = 0;
     static const byte _MAX_SUBPAGE = 1;
     byte _SELECTED_PAGE;
@@ -607,6 +610,7 @@ class Menu {
            (String) "POS2 " + (Reading.Data.sensorPosition[1] + 0.11),
            (String) "POS3 " + (Reading.Data.sensorPosition[2] + 0.11),
            (String) "NO SENSOR"},
+
           {(String) "TS1 " + Reading.Data.sensorTimestamps[0],
            (String) "TS2 " + Reading.Data.sensorTimestamps[1],
            (String) "TS3 " + Reading.Data.sensorTimestamps[2],
@@ -701,7 +705,9 @@ class Menu {
         _SELECTED_MENU = _DISPLAY;
         DisplayPage._FOCUSED_PAGE = DisplayPage._MIN_PAGE;
         DisplayPage.displayFocusedPage();
-        if (Serial){ Reading.display(); }
+        if (Serial) {
+          Reading.display();
+        }
         break;
       case _PREFERENCES:
         _SELECTED_MENU = _PREFERENCES;
@@ -714,6 +720,7 @@ class Menu {
 
   long messageTimer = millis();
   byte messageIndex = 0;
+
   void loop() {
     if (_FOCUSED_MENU == _STANDBY) {
       if ((millis() - messageTimer) > 1900) {
@@ -757,7 +764,7 @@ class Menu {
         delay(250);
       }
 
-      // Aumenta a valor decimal de uma preferencia expecifica
+      // Diminui o valor decimal de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options.decreasePrefValue(0.01);
         delay(250);
@@ -827,7 +834,7 @@ class Menu {
 
       // Diminui o valor inteiro de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
-        Options.increasePrefValue(1.00);
+        Options.decreasePrefValue(1.00);
         delay(90);
       }
 
@@ -843,9 +850,9 @@ class Menu {
         delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Left) {
-      // Diminui o valor decimal de uma preferencia expecifica
+      // Aumenta a valor decimal de uma preferencia expecifica
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
-        Options.decreasePrefValue(0.01);
+        Options.increasePrefValue(0.01);
         delay(180);
       }
     }
