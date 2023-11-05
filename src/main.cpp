@@ -275,25 +275,12 @@ class Reading {
  public:
   class Data {
    public:
-    static const byte maxReading = 2;
-    byte currentReading = 1;
-    byte prevReading = 0;
-
     double sensorPosition[3];
-    double sensorTimestamps[maxReading][4];
-    double timeIntervals[maxReading][4];
-    double meanVelocity[maxReading][4];
-    double distanceVariation[maxReading][4];
+    double sensorTimestamps[4];
+    double timeIntervals[4];
+    double meanVelocity[4];
+    double distanceVariation[4];
 
-    void increaseReading() {
-      if (currentReading < maxReading) {
-        currentReading++;
-        prevReading++;
-      } else if (currentReading == maxReading) {
-        currentReading = 1;
-        prevReading = 0;
-      }
-    }
   } Data;
 
   void read() {
@@ -337,7 +324,7 @@ class Reading {
 
         Serial.println(F("AEMF :: INICIANDO LEITURA DOS SENSORES."));
         ReleaseGate.open();
-        Data.sensorTimestamps[Data.currentReading][0] = millis();
+        Data.sensorTimestamps[0] = millis();
         Serial.println(F("AEMF :: OBJETO LIBERADO."));
 
         while (1) {
@@ -345,21 +332,21 @@ class Reading {
           Display.printCentered(F("INICIADOS."), 1, 0);
 
           if (analogRead(FIRST_IR_SENSOR_PIN) < 120) {
-            Data.sensorTimestamps[Data.currentReading][1] = millis();
+            Data.sensorTimestamps[1] = millis();
 
             Serial.println(F("AEMF :: PRIMEIRO SENSOR INTERROMPIDO."));
             Display.printCentered(F("PRIMEIRO IR"), 0, 0);
 
             while (1) {
               if (analogRead(SECOND_IR_SENSOR_PIN) < 120) {
-                Data.sensorTimestamps[Data.currentReading][2] = millis();
+                Data.sensorTimestamps[2] = millis();
 
                 Serial.println(F("AEMF :: SEGUNDO SENSOR INTERROMPIDO."));
                 Display.printCentered(F("SEGUNDO IR"), 0, 0);
 
                 while (1) {
                   if (analogRead(THIRD_IR_SENSOR_PIN) < 120) {
-                    Data.sensorTimestamps[Data.currentReading][3] = millis();
+                    Data.sensorTimestamps[3] = millis();
 
                     Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO."));
                     Display.printCentered(F("TERCEIRO IR"), 0, 0);
@@ -377,28 +364,27 @@ class Reading {
                     Data.sensorPosition[1] += 0.11;
                     Data.sensorPosition[2] += 0.11;
 
-                    Data.distanceVariation[Data.currentReading][0] = Data.sensorPosition[0];                           // S1 - LG
-                    Data.distanceVariation[Data.currentReading][1] = Data.sensorPosition[1] - Data.sensorPosition[0];  // S2 - S1
-                    Data.distanceVariation[Data.currentReading][2] = Data.sensorPosition[2] - Data.sensorPosition[1];  // S3 - S2
-                    Data.distanceVariation[Data.currentReading][3] = Data.sensorPosition[2];                           // S3 - LG
+                    Data.distanceVariation[0] = Data.sensorPosition[0];                           // S1 - LG
+                    Data.distanceVariation[1] = Data.sensorPosition[1] - Data.sensorPosition[0];  // S2 - S1
+                    Data.distanceVariation[2] = Data.sensorPosition[2] - Data.sensorPosition[1];  // S3 - S2
+                    Data.distanceVariation[3] = Data.sensorPosition[2];                           // S3 - LG
 
                     Serial.println(F("AEMF :: CALCULADO VARIAÇÃO DE TEMPO."));
-                    Data.timeIntervals[Data.currentReading][0] = Data.sensorTimestamps[Data.currentReading][1] - Data.sensorTimestamps[Data.currentReading][0];  // S1 - LG
-                    Data.timeIntervals[Data.currentReading][1] = Data.sensorTimestamps[Data.currentReading][2] - Data.sensorTimestamps[Data.currentReading][1];  // S2 - S1
-                    Data.timeIntervals[Data.currentReading][2] = Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][2];  // S3 - S2
-                    Data.timeIntervals[Data.currentReading][3] = Data.sensorTimestamps[Data.currentReading][3] - Data.sensorTimestamps[Data.currentReading][0];  // S3 - LG
+                    Data.timeIntervals[0] = Data.sensorTimestamps[1] - Data.sensorTimestamps[0];  // S1 - LG
+                    Data.timeIntervals[1] = Data.sensorTimestamps[2] - Data.sensorTimestamps[1];  // S2 - S1
+                    Data.timeIntervals[2] = Data.sensorTimestamps[3] - Data.sensorTimestamps[2];  // S3 - S2
+                    Data.timeIntervals[3] = Data.sensorTimestamps[3] - Data.sensorTimestamps[0];  // S3 - LG
 
                     Serial.println(F("AEMF :: CALCULANDO VELOCIDADE MÉDIA."));
-                    Data.meanVelocity[Data.currentReading][0] = Data.distanceVariation[Data.currentReading][0] / (Data.timeIntervals[Data.currentReading][0] / float(1000));  // S1 - LG
-                    Data.meanVelocity[Data.currentReading][1] = Data.distanceVariation[Data.currentReading][1] / (Data.timeIntervals[Data.currentReading][1] / float(1000));  // S2 - S1
-                    Data.meanVelocity[Data.currentReading][2] = Data.distanceVariation[Data.currentReading][2] / (Data.timeIntervals[Data.currentReading][2] / float(1000));  // S3 - S2
-                    Data.meanVelocity[Data.currentReading][3] = Data.distanceVariation[Data.currentReading][3] / (Data.timeIntervals[Data.currentReading][3] / float(1000));  // S3 - LG
+                    Data.meanVelocity[0] = Data.distanceVariation[0] / (Data.timeIntervals[0] / 1000.00);  // S1 - LG
+                    Data.meanVelocity[1] = Data.distanceVariation[1] / (Data.timeIntervals[1] / 1000.00);  // S2 - S1
+                    Data.meanVelocity[2] = Data.distanceVariation[2] / (Data.timeIntervals[2] / 1000.00);  // S3 - S2
+                    Data.meanVelocity[3] = Data.distanceVariation[3] / (Data.timeIntervals[3] / 1000.00);  // S3 - LG
 
                     Serial.println(F("AEMF :: DADOS PROCESSADOS E CALCULADOS."));
                     Serial.println(F("AEMF :: PROCESSAMENTO COMPLETO.\n"));
                     Display.printCentered(F("LEITURA"), 0, 0);
                     Display.printCentered(F("COMPLETA."), 1, 0);
-                    Data.increaseReading();
                     return;
                   }
                 }
@@ -416,28 +402,28 @@ class Reading {
     String messages[25] = {
         "",
         F("Variação de Distancia"),
-        (String)F("Primeira: ") + Data.distanceVariation[Data.prevReading][0] + F("cm"),
-        (String)F("Segunda: ") + Data.distanceVariation[Data.prevReading][1] + F("cm"),
-        (String)F("Terceira: ") + Data.distanceVariation[Data.prevReading][2] + F("cm"),
-        (String)F("Total: ") + Data.distanceVariation[Data.prevReading][3] + F("cm"),
+        (String)F("Primeira: ") + Data.distanceVariation[0] + F("cm"),
+        (String)F("Segunda: ") + Data.distanceVariation[1] + F("cm"),
+        (String)F("Terceira: ") + Data.distanceVariation[2] + F("cm"),
+        (String)F("Total: ") + Data.distanceVariation[3] + F("cm"),
         "",
         F("Tempo do Sensor"),
-        (String)F("Primeiro: ") + Data.sensorTimestamps[Data.prevReading][0] + F("ms"),
-        (String)F("Segundo: ") + Data.sensorTimestamps[Data.prevReading][1] + F("ms"),
-        (String)F("Terceiro: ") + Data.sensorTimestamps[Data.prevReading][2] + F("ms"),
-        (String)F("Total: ") + Data.sensorTimestamps[Data.prevReading][3] + F("ms"),
+        (String)F("Primeiro: ") + Data.sensorTimestamps[0] + F("ms"),
+        (String)F("Segundo: ") + Data.sensorTimestamps[1] + F("ms"),
+        (String)F("Terceiro: ") + Data.sensorTimestamps[2] + F("ms"),
+        (String)F("Total: ") + Data.sensorTimestamps[3] + F("ms"),
         "",
         F("Intervalo de Tempo"),
-        (String)F("Primeiro: ") + Data.timeIntervals[Data.prevReading][0] + F("ms"),
-        (String)F("Segundo: ") + Data.timeIntervals[Data.prevReading][1] + F("ms"),
-        (String)F("Terceiro: ") + Data.timeIntervals[Data.prevReading][2] + F("ms"),
-        (String)F("Total: ") + Data.timeIntervals[Data.prevReading][3] + F("ms"),
+        (String)F("Primeiro: ") + Data.timeIntervals[0] + F("ms"),
+        (String)F("Segundo: ") + Data.timeIntervals[1] + F("ms"),
+        (String)F("Terceiro: ") + Data.timeIntervals[2] + F("ms"),
+        (String)F("Total: ") + Data.timeIntervals[3] + F("ms"),
         "",
         F("Velocidade Média"),
-        (String)F("Primeira: ") + Data.meanVelocity[Data.prevReading][0] + F("cm/s"),
-        (String)F("Segunda: ") + Data.meanVelocity[Data.prevReading][1] + F("cm/s"),
-        (String)F("Terceira: ") + Data.meanVelocity[Data.prevReading][2] + F("cm/s"),
-        (String)F("Total: ") + Data.meanVelocity[Data.prevReading][3] + F("cm/s"),
+        (String)F("Primeira: ") + Data.meanVelocity[0] + F("cm/s"),
+        (String)F("Segunda: ") + Data.meanVelocity[1] + F("cm/s"),
+        (String)F("Terceira: ") + Data.meanVelocity[2] + F("cm/s"),
+        (String)F("Total: ") + Data.meanVelocity[3] + F("cm/s"),
     };
 
     Serial.println(_top);
@@ -617,22 +603,22 @@ class Menu {
       _SELECTED_PAGE = _FOCUSED_PAGE;
       String _SUB_PAGE_LABEL[6][4] = {
           {},
-          {(String) "VD1: " + Reading.Data.distanceVariation[Reading.Data.prevReading][0],
-           (String) "VD2: " + Reading.Data.distanceVariation[Reading.Data.prevReading][1],
-           (String) "VD3: " + Reading.Data.distanceVariation[Reading.Data.prevReading][2],
-           (String) "VD4: " + Reading.Data.distanceVariation[Reading.Data.prevReading][3]},
-          {(String) "TS1 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][0],
-           (String) "TS2 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][1],
-           (String) "TS3 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][2],
-           (String) "TS4 " + Reading.Data.sensorTimestamps[Reading.Data.prevReading][3]},
-          {(String) "IT1 " + Reading.Data.timeIntervals[Reading.Data.prevReading][0],
-           (String) "IT2 " + Reading.Data.timeIntervals[Reading.Data.prevReading][1],
-           (String) "IT3 " + Reading.Data.timeIntervals[Reading.Data.prevReading][2],
-           (String) "IT4 " + Reading.Data.timeIntervals[Reading.Data.prevReading][3]},
-          {(String) "VM1 " + Reading.Data.meanVelocity[Reading.Data.prevReading][0],
-           (String) "VM2 " + Reading.Data.meanVelocity[Reading.Data.prevReading][1],
-           (String) "VM3 " + Reading.Data.meanVelocity[Reading.Data.prevReading][2],
-           (String) "VM4 " + Reading.Data.meanVelocity[Reading.Data.prevReading][3]}};
+          {(String) "VD1: " + Reading.Data.distanceVariation[0],
+           (String) "VD2: " + Reading.Data.distanceVariation[1],
+           (String) "VD3: " + Reading.Data.distanceVariation[2],
+           (String) "VD4: " + Reading.Data.distanceVariation[3]},
+          {(String) "TS1 " + Reading.Data.sensorTimestamps[0],
+           (String) "TS2 " + Reading.Data.sensorTimestamps[1],
+           (String) "TS3 " + Reading.Data.sensorTimestamps[2],
+           (String) "TS4 " + Reading.Data.sensorTimestamps[3]},
+          {(String) "IT1 " + Reading.Data.timeIntervals[0],
+           (String) "IT2 " + Reading.Data.timeIntervals[1],
+           (String) "IT3 " + Reading.Data.timeIntervals[2],
+           (String) "IT4 " + Reading.Data.timeIntervals[3]},
+          {(String) "VM1 " + Reading.Data.meanVelocity[0],
+           (String) "VM2 " + Reading.Data.meanVelocity[1],
+           (String) "VM3 " + Reading.Data.meanVelocity[2],
+           (String) "VM4 " + Reading.Data.meanVelocity[3]}};
 
       if (_FOCUSED_SUBPAGE == _MIN_SUBPAGE) {
         Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][0], 0, 0);
