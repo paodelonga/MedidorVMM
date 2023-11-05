@@ -159,10 +159,10 @@ class Properties {
     const char *AUTHORS_FULLNAME[2] = {"Jotaquerles do Nascimento França", "Abiel Mendes dos Santos"};
     const char *AUTHORS_SURNAME[2] = {"Jotaquerles N", "Abiel M"};
     const char *VERSION = "2.0.0";
-    const char *REVISION_DATE = "Saturday, 04 November, 2023; 04/11/2023 - 19:05:50";
+    const char *REVISION_DATE = "Sunday, 05 November, 2023; 05/11/2023 - 01:09:39";
     const char *REPO_URL = "https://github.com/paodelonga/aemf-01";
 
-    Display.printWait(F("Autores"), 0, 0);
+    Display.printWait(F("AUTORES"), 0, 0);
     Display.printWait((AUTHORS_SURNAME[0]), 0, 0);
     Display.printWait((AUTHORS_SURNAME[1]), 0, 0);
 
@@ -174,12 +174,13 @@ class Properties {
     Serial.print(F("AEMF :: Versao: "));
     Serial.println(VERSION);
 
-    Display.printWait((String)F("Versao: ") + VERSION, 0, 1);
+    Display.printWait((String)F("VERSAO: ") + VERSION, 0, 1);
 
     Serial.print(F("AEMF :: Revisao: "));
     Serial.println(REVISION_DATE);
 
     Display.printWait(F("git@paodelonga"), 0, 0);
+    Display.printWait(F("MNPEF: AEMF-01"), 0, 0);
 
     Serial.print(F("AEMF :: Repositorio: "));
     Serial.println(REPO_URL);
