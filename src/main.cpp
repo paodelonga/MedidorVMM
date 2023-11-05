@@ -684,7 +684,7 @@ class Menu {
 
   byte _FOCUSED_MENU;
   byte _SELECTED_MENU;
-  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"ALTERAR", "CONFIGS"}, {"EXIBIR DADOS", "DA LEITURA"}};
+  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"POSICIONAMENTO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
   long switcherTime;
 
   void displayFocusedMenu() {
@@ -771,12 +771,6 @@ class Menu {
         Options.increasePrefValue(0.01);
         delay(250);
       }
-
-      // Exibe a subpagina anterior na pagina atual
-      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
-        DisplayPage.focusPrevSubpage();
-        delay(250);
-      }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
       // Escolha de um menu especifico durante a navegacao entre os menus
       if (_SELECTED_MENU == _STANDBY && _FOCUSED_MENU != _STANDBY) {
@@ -827,6 +821,12 @@ class Menu {
         DisplayPage.focusPrevPage();
         delay(250);
       }
+
+      // Exibe a subpagina anterior na pagina atual
+      if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
+        DisplayPage.focusPrevSubpage();
+        delay(250);
+      }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Down) {
       // Focaliza na proxima preferencia
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
@@ -845,17 +845,17 @@ class Menu {
         DisplayPage.focusNextPage();
         delay(250);
       }
+
+      // Exibe a proxima subpagina da pagina atual
+      if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
+        DisplayPage.focusNextSubpage();
+        delay(250);
+      }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Left) {
       // Diminui o valor decimal de uma preferencia expecifica
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options.decreasePrefValue(0.01);
         delay(180);
-      }
-
-      // Exibe a proxima subpagina da pagina atual
-      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
-        DisplayPage.focusNextSubpage();
-        delay(250);
       }
     }
 
