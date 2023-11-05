@@ -517,36 +517,36 @@ class Menu {
 
     void increasePrefValue(float inc) {
       if (_FOCUSED_PREFS == 1) {
-        if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 190) {
-          if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 10) {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 10;
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 75) {
+          if (Reading.Data.sensorPosition[Reading.Data.currentReading][0] < 20) {
+            Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 20;
           } else {
             Reading.Data.sensorPosition[Reading.Data.currentReading][0] += inc;
           }
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 10;
+          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 20;
         }
 
       } else if (_FOCUSED_PREFS == 2) {
-        if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 190) {
-          if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 20) {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 20;
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 80) {
+          if (Reading.Data.sensorPosition[Reading.Data.currentReading][1] < 25) {
+            Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 25;
           } else {
             Reading.Data.sensorPosition[Reading.Data.currentReading][1] += inc;
           }
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 20;
+          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 25;
         }
 
       } else if (_FOCUSED_PREFS == 3) {
-        if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 190) {
-          if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 60) {
-            Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 60;
+        if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 85 {
+          if (Reading.Data.sensorPosition[Reading.Data.currentReading][2] < 30) {
+            Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 30;
           } else {
             Reading.Data.sensorPosition[Reading.Data.currentReading][2] += inc;
           }
         } else {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 60;
+          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 30;
         }
       }
       displaySelectedPref();
@@ -554,21 +554,21 @@ class Menu {
 
     void decreasePrefValue(float dec) {
       if (_FOCUSED_PREFS == 1) {
-        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][0] -= dec) < 10) {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 190;
+        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][0] -= dec) < 20) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][0] = 75;
         } else {
           Reading.Data.sensorPosition[Reading.Data.currentReading][0] -= dec;
         }
       } else if (_FOCUSED_PREFS == 2) {
-        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][1] -= dec) < 30) {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 190;
+        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][1] -= dec) < 25) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][1] = 80;
         } else {
           Reading.Data.sensorPosition[Reading.Data.currentReading][1] -= dec;
         }
 
       } else if (_FOCUSED_PREFS == 3) {
-        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][2] -= dec) < 60) {
-          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 190;
+        if ((Reading.Data.sensorPosition[Reading.Data.currentReading][2] -= dec) < 30) {
+          Reading.Data.sensorPosition[Reading.Data.currentReading][2] = 85;
         } else {
           Reading.Data.sensorPosition[Reading.Data.currentReading][2] -= dec;
         }
