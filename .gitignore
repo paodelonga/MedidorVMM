@@ -1,20 +1,2 @@
-# General gitignore 
-
-# Python
-**__pycache__/**
-
-# Emv
-.env
-.env.local
-.env.*.local
-
-# Arduino
-sketch.yaml
-sketch.yml
-sketch.json
-
-# Platformio
-**.pio/**
-
-# VSCodium
-**.vscode/**
+.pio/
+.vscode/
