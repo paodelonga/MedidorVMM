@@ -357,22 +357,22 @@ class Reading {
 
                     Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO."));
 
-                    Data.distanceVariation[0] = Data.sensorPosition[0] + 0.11;                                      // S1 - LG
-                    Data.distanceVariation[1] = (Data.sensorPosition[1] + 0.11) - (Data.sensorPosition[0] + 0.11);  // S2 - S1
-                    Data.distanceVariation[2] = (Data.sensorPosition[2] + 0.11) - (Data.sensorPosition[1] + 0.11);  // S3 - S2
-                    Data.distanceVariation[3] = Data.sensorPosition[2];                                             // S3 - LG
+                    Data.distanceVariation[0] = Data.sensorPosition[0] + 0.11;                                      // S1 -> LG
+                    Data.distanceVariation[1] = (Data.sensorPosition[1] + 0.11) - (Data.sensorPosition[0] + 0.11);  // S2 -> S1
+                    Data.distanceVariation[2] = (Data.sensorPosition[2] + 0.11) - (Data.sensorPosition[1] + 0.11);  // S3 -> S2
+                    Data.distanceVariation[3] = Data.sensorPosition[2];                                             // S3 -> LG
 
                     Serial.println(F("AEMF :: CALCULADO VARIAÇÃO DE TEMPO."));
-                    Data.timeIntervals[0] = Data.sensorTimestamps[1] - Data.sensorTimestamps[0];  // S1 - LG
-                    Data.timeIntervals[1] = Data.sensorTimestamps[2] - Data.sensorTimestamps[1];  // S2 - S1
-                    Data.timeIntervals[2] = Data.sensorTimestamps[3] - Data.sensorTimestamps[2];  // S3 - S2
-                    Data.timeIntervals[3] = Data.sensorTimestamps[3] - Data.sensorTimestamps[0];  // S3 - LG
+                    Data.timeIntervals[0] = Data.sensorTimestamps[1] - Data.sensorTimestamps[0];  // S1 -> LG
+                    Data.timeIntervals[1] = Data.sensorTimestamps[2] - Data.sensorTimestamps[1];  // S2 -> S1
+                    Data.timeIntervals[2] = Data.sensorTimestamps[3] - Data.sensorTimestamps[2];  // S3 -> S2
+                    Data.timeIntervals[3] = Data.sensorTimestamps[3] - Data.sensorTimestamps[0];  // S3 -> LG
 
                     Serial.println(F("AEMF :: CALCULANDO VELOCIDADE MÉDIA."));
-                    Data.meanVelocity[0] = Data.distanceVariation[0] / (Data.timeIntervals[0] / 1000.00);  // S1 - LG
-                    Data.meanVelocity[1] = Data.distanceVariation[1] / (Data.timeIntervals[1] / 1000.00);  // S2 - S1
-                    Data.meanVelocity[2] = Data.distanceVariation[2] / (Data.timeIntervals[2] / 1000.00);  // S3 - S2
-                    Data.meanVelocity[3] = Data.distanceVariation[3] / (Data.timeIntervals[3] / 1000.00);  // S3 - LG
+                    Data.meanVelocity[0] = Data.distanceVariation[0] / Data.timeIntervals[0];  // S1 -> LG
+                    Data.meanVelocity[1] = Data.distanceVariation[1] / Data.timeIntervals[1];  // S2 -> S1
+                    Data.meanVelocity[2] = Data.distanceVariation[2] / Data.timeIntervals[2];  // S3 -> S2
+                    Data.meanVelocity[3] = Data.distanceVariation[3] / Data.timeIntervals[3];  // S3 -> LG
 
                     Serial.println(F("AEMF :: DADOS PROCESSADOS E CALCULADOS."));
                     Serial.println(F("AEMF :: PROCESSAMENTO COMPLETO.\n"));
@@ -421,10 +421,10 @@ class Reading {
         (String)F("Total: ") + Data.timeIntervals[3] + F("ms"),
         "",
         F("Velocidade Media"),
-        (String)F("Primeira: ") + Data.meanVelocity[0] + F("cm/s"),
-        (String)F("Segunda: ") + Data.meanVelocity[1] + F("cm/s"),
-        (String)F("Terceira: ") + Data.meanVelocity[2] + F("cm/s"),
-        (String)F("Total: ") + Data.meanVelocity[3] + F("cm/s"),
+        (String)F("Primeira: ") + Data.meanVelocity[0] + F("cm/ms"),
+        (String)F("Segunda: ") + Data.meanVelocity[1] + F("cm/ms"),
+        (String)F("Terceira: ") + Data.meanVelocity[2] + F("cm/ms"),
+        (String)F("Total: ") + Data.meanVelocity[3] + F("cm/ms"),
         "",
     };
 
@@ -595,7 +595,7 @@ class Menu {
         {"TEMPO DO", "SENSOR (MS)"},
         {"VARIACAO DE", "DISTANCIA (CM)"},
         {"INTERVALO DE", "TEMPO (MS)"},
-        {"VELOCIDADE", "MEDIA (CM/S)"}};
+        {"VELOCIDADE", "MEDIA (CM/MS)"}};
 
     void displayFocusedPage() {
       Display.printCentered(_PAGE_LABELS[_FOCUSED_PAGE][0], 0, 0);
