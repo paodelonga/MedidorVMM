@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <Servo.h>
-#include <avr/pgmspace.h>
 #include <math.h>
 
 LiquidCrystal LiquidCrystal(8, 9, 4, 5, 6, 7);
@@ -310,7 +309,6 @@ class Reading {
 
       if (KeypadButtons.Pressed() == KeypadButtons.Right) {
         ReleaseGate.close();
-        Serial.println(F("AEMF :: OBJETO RETIDO!"));
 
         for (byte seconds = random(0, 10); seconds > 0; seconds--) {
           Serial.print(F("AEMF :: LIBERANDO OBJETO EM: "));
@@ -356,7 +354,6 @@ class Reading {
                     Serial.println(F("AEMF :: INICIANDO CALCULO DOS DADOS."));
 
                     Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO."));
-
                     Data.distanceVariation[0] = Data.sensorPosition[0] + 0.11;                                      // S1 -> LG
                     Data.distanceVariation[1] = (Data.sensorPosition[1] + 0.11) - (Data.sensorPosition[0] + 0.11);  // S2 -> S1
                     Data.distanceVariation[2] = (Data.sensorPosition[2] + 0.11) - (Data.sensorPosition[1] + 0.11);  // S3 -> S2
@@ -374,13 +371,10 @@ class Reading {
                     Data.meanVelocity[2] = Data.distanceVariation[2] / Data.timeIntervals[2];  // S3 -> S2
                     Data.meanVelocity[3] = Data.distanceVariation[3] / Data.timeIntervals[3];  // S3 -> LG
 
-                    Serial.println(F("AEMF :: DADOS PROCESSADOS E CALCULADOS."));
                     Serial.println(F("AEMF :: PROCESSAMENTO COMPLETO.\n"));
 
-                    Serial.println(F("AEMF :: PRESSIONE SELECT E SELICIONE"));
-                    Serial.println(F("AEMF :: O MODO DE EXIBICAO PARA VISUALIZAR OS DADOS.\n"));
-                    Display.printCentered(F("LEITURA"), 0, 0);
-                    Display.printCentered(F("COMPLETA."), 1, 0);
+                    Serial.println(F("AEMF :: PRESSIONE SELECT E SELECIONE O MODO"));
+                    Serial.println(F("AEMF :: DE EXIBICAO PARA VISUALIZAR OS DADOS.\n"));
                     return;
                   }
                 }
@@ -609,17 +603,17 @@ class Menu {
           {(String) "POS1 " + (Reading.Data.sensorPosition[0] + 0.11),
            (String) "POS2 " + (Reading.Data.sensorPosition[1] + 0.11),
            (String) "POS3 " + (Reading.Data.sensorPosition[2] + 0.11),
-           (String) "NO SENSOR"},
+           (String) "SEM SENSOR"},
 
           {(String) "TS1 " + Reading.Data.sensorTimestamps[0],
            (String) "TS2 " + Reading.Data.sensorTimestamps[1],
            (String) "TS3 " + Reading.Data.sensorTimestamps[2],
            (String) "TS4 " + Reading.Data.sensorTimestamps[3]},
 
-          {(String) "VD1: " + Reading.Data.distanceVariation[0],
-           (String) "VD2: " + Reading.Data.distanceVariation[1],
-           (String) "VD3: " + Reading.Data.distanceVariation[2],
-           (String) "VD4: " + Reading.Data.distanceVariation[3]},
+          {(String) "VD1 " + Reading.Data.distanceVariation[0],
+           (String) "VD2 " + Reading.Data.distanceVariation[1],
+           (String) "VD3 " + Reading.Data.distanceVariation[2],
+           (String) "VD4 " + Reading.Data.distanceVariation[3]},
 
           {(String) "IT1 " + Reading.Data.timeIntervals[0],
            (String) "IT2 " + Reading.Data.timeIntervals[1],
@@ -678,7 +672,7 @@ class Menu {
 
   byte _FOCUSED_MENU;
   byte _SELECTED_MENU;
-  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"POSICIONAMENTO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
+  const char *_MENUS_LABELS[4][2] = {{}, {"FAZER NOVA", "LEITURA"}, {"DEFINIR POSICAO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
   long switcherTime;
 
   void displayFocusedMenu() {
@@ -726,7 +720,7 @@ class Menu {
       if ((millis() - messageTimer) > 1900) {
         if (messageIndex == 0) {
           Display.printCentered(F("USE SELECT"), 0, 0);
-          Display.printCentered(F("PARA NAVEGACAO"), 1, 0);
+          Display.printCentered(F("PARA NAVEGAR"), 1, 0);
           messageTimer = millis();
           messageIndex++;
         }
@@ -734,7 +728,7 @@ class Menu {
       if (millis() - messageTimer > 2900) {
         if (messageIndex == 1) {
           Display.printCentered(F("USE RIGHT"), 0, 0);
-          Display.printCentered(F("PARA SELECAO"), 1, 0);
+          Display.printCentered(F("PARA ENTRAR"), 1, 0);
           messageTimer = millis();
           messageIndex = 0;
         }
