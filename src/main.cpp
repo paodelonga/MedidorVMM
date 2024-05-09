@@ -155,49 +155,50 @@ class Display {
 class Properties {
  public:
   void begin() {
-    const char *AUTHORS_FULLNAME[2] = {"Jotaquerles do Nascimento França", "Abiel Mendes dos Santos"};
-    const char *AUTHORS_SURNAME[2] = {"Jotaquerles N", "Abiel M"};
-    const char *VERSION = "2.0.0";
-    const char *REVISION_DATE = "Sunday, 05 November, 2023; 05/11/2023 - 01:09:39";
+    // const char *AUTHORS_FULLNAME[2] = {"Jotaquerles do Nascimento França", "Abiel Mendes dos Santos"};
+    // const char *AUTHORS_SURNAME[2] = {"Jotaquerles N", "Abiel M"};
+    const char *VERSION = "0.0.0";
+    const char *REVISION_DATE = "09/05/2024 - 07:21:36";
     const char *REPO_URL = "https://github.com/paodelonga/aemf-01";
 
-    Display.printWait(F("AUTORES"), 0, 0);
-    Display.printWait((AUTHORS_SURNAME[0]), 0, 0);
-    Display.printWait((AUTHORS_SURNAME[1]), 0, 0);
+    // Display.printWait(F("AUTORES"), 0, 0);
+    // Display.printWait((AUTHORS_SURNAME[0]), 0, 0);
+    // Display.printWait((AUTHORS_SURNAME[1]), 0, 0);
 
-    Serial.print(F("AEMF :: Autores: "));
-    Serial.println(AUTHORS_FULLNAME[0]);
-    Serial.print(F("AEMF :: Autores: "));
-    Serial.println(AUTHORS_FULLNAME[1]);
+    // Serial.print(F("AEMF :: Autores: "));
+    // Serial.println(AUTHORS_FULLNAME[0]);
+    // Serial.print(F("AEMF :: Autores: "));
+    // Serial.println(AUTHORS_FULLNAME[1]);
 
-    Display.printWait((String)F("VERSAO: ") + VERSION, 0, 1);
-
-    Serial.print(F("AEMF :: Revisao: "));
-    Serial.println(REVISION_DATE);
-
-    Display.printWait(F("git@paodelonga"), 0, 0);
     Display.printWait(F("MNPEF: AEMF-01"), 0, 0);
 
     Serial.print(F("AEMF :: Repositorio: "));
     Serial.println(REPO_URL);
+
+    Display.printWait(F("github@aemf-01"), 0, 0);
+
+    Serial.print(F("AEMF :: Revisao: "));
+    Serial.println(REVISION_DATE);
+
+    Display.printWait((String)F("VERSAO: ") + VERSION, 0, 1);
 
     Serial.print(F("AEMF :: Versao: "));
     Serial.println(VERSION);
 
     Serial.println(F(""));
 
-    const char *message = "INICIANDO";
-    Display.printWait(message, 0, 1);
+    // const char *message = "INICIANDO";
+    // Display.printWait(message, 0, 1);
 
-    for (byte i = 0; i < random(10); i++) {
-      for (byte x = (strlen(message) + 3); x < (strlen(message) + 3) + 3; x++) {
-        LiquidCrystal.setCursor(x, 0);
-        LiquidCrystal.print(F("."));
-
-        delay(5 * 115 / 3.112);
-        Display.drawChar(Display.topLine, x, 0);
-      }
-    }
+    //     for (byte i = 0; i < random(10); i++) {
+    //       for (byte x = (strlen(message) + 3); x < (strlen(message) + 3) + 3; x++) {
+    //         LiquidCrystal.setCursor(x, 0);
+    //         LiquidCrystal.print(F("."));
+    //
+    //         delay(5 * 115 / 3.112);
+    //         Display.drawChar(Display.topLine, x, 0);
+    //       }
+    //     }
   }
 } Properties;
 
