@@ -190,15 +190,15 @@ class KeypadButtons {
 
   int Pressed() {
     buttonValue = analogRead(0);
-    if (buttonValue < 50) {
+    if (buttonValue < 20) {
       pressedValue = Right;
-    } else if (buttonValue > 50 and buttonValue < 250) {
+    } else if (buttonValue > 115 and buttonValue < 150) {
       pressedValue = Up;
-    } else if (buttonValue > 250 and buttonValue < 450) {
+    } else if (buttonValue > 290 and buttonValue < 320) {
       pressedValue = Down;
-    } else if (buttonValue > 450 and buttonValue < 600) {
+    } else if (buttonValue > 460 and buttonValue < 502) {
       pressedValue = Left;
-    } else if (buttonValue > 600 and buttonValue < 900) {
+    } else if (buttonValue > 710 and buttonValue < 740) {
       pressedValue = Select;
     } else if (buttonValue > 900) {
       pressedValue = NONE;
@@ -649,7 +649,6 @@ class Menu {
         _SELECTED_MENU = _PREFERENCES;
         Options._FOCUSED_PREFS = Options._MIN_PREFS;
         Options.displayFocusedPref();
-
         break;
     }
   }
@@ -689,7 +688,7 @@ class Menu {
         Options._FOCUSED_PREFS = _STANDBY;
         _SELECTED_MENU = _STANDBY;
         displayFocusedMenu();
-        delay(500);
+        delay(250);
       }
 
       // Voltar para escolha de menus apos somente focar em uma pagina da exibicao
@@ -697,93 +696,93 @@ class Menu {
         DisplayPage._FOCUSED_PAGE = _STANDBY;
         _SELECTED_MENU = _STANDBY;
         displayFocusedMenu();
-        delay(500);
+        delay(250);
       }
 
       // Diminui o valor decimal de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options.decreasePrefValue(0.01);
-        delay(500);
+        delay(150);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
       // Escolha de um menu especifico durante a navegacao entre os menus
       if (_SELECTED_MENU == _STANDBY && _FOCUSED_MENU != _STANDBY) {
         selectMenu();
-        delay(500);
+        delay(250);
       }
 
       // Escolha de uma preferencia
       else if (_SELECTED_MENU == _PREFERENCES && Options._FOCUSED_PREFS != _STANDBY && Options._SELECTED_PREFS == _STANDBY) {
         Options.selectPref();
-        delay(500);
+        delay(250);
       }
 
       // Escolha de uma pagina
       else if (_SELECTED_MENU == _DISPLAY && DisplayPage._FOCUSED_PAGE != _STANDBY && DisplayPage._SELECTED_PAGE == _STANDBY) {
         DisplayPage.displayFocusedSubpage();
-        delay(500);
+        delay(250);
       }
 
       // Voltar para a escolha de preferencias
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options._SELECTED_PREFS = _STANDBY;
         Options.displayFocusedPref();
-        delay(500);
+        delay(250);
       }
       // Voltar para a escolha de paginas
       else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
         DisplayPage._SELECTED_PAGE = _STANDBY;
         DisplayPage._FOCUSED_SUBPAGE = _STANDBY;
         DisplayPage.displayFocusedPage();
-        delay(500);
+        delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Up) {
       // Foca na preferencia anterior somente se estiver no menu de preferencias e nenhuma for selecionada
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
         Options.focusPrevPrefs();
-        delay(500);
+        delay(250);
       }
 
       // Aumenta o valor inteiro de uma preferencia
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options.increasePrefValue(1.00);
-        delay(150);
+        delay(250);
       }
 
       // Focaliza na pagina anterior
       if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE == _STANDBY) {
         DisplayPage.focusPrevPage();
-        delay(500);
+        delay(250);
       }
 
       // Exibe a subpagina anterior na pagina atual
       if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
         DisplayPage.focusPrevSubpage();
-        delay(500);
+        delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Down) {
       // Focaliza na proxima preferencia
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
         Options.focusNextPrefs();
-        delay(500);
+        delay(250);
       }
 
       // Diminui o valor inteiro de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options.decreasePrefValue(1.00);
-        delay(150);
+        delay(250);
       }
 
       // Focaliza na proxima pagina
       if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE == _STANDBY) {
         DisplayPage.focusNextPage();
-        delay(500);
+        delay(250);
       }
 
       // Exibe a proxima subpagina da pagina atual
       if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
         DisplayPage.focusNextSubpage();
-        delay(500);
+        delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Left) {
       // Aumenta a valor decimal de uma preferencia expecifica
