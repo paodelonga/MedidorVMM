@@ -240,7 +240,7 @@ class Reading {
     ReleaseGate.open();
 
     Serial.println(F("AEMF :: PARA INICIAR POSICIONE O OBJETO"));
-    Serial.println(F("AEMF :: E PRESSIONE RIGHT PARA RETENCAO.\n"));
+    Serial.println(F("AEMF :: E PRESSIONE SELECT PARA RETENCAO.\n"));
 
     long messageTimer = millis();
     byte messageIndex = 0;
@@ -256,13 +256,13 @@ class Reading {
       if (millis() - messageTimer > 2600) {
         if (messageIndex == 1) {
           Display.printCentered(F("E PRESSIONE"), 0, 0);
-          Display.printCentered(F("RIGHT."), 1, 0);
+          Display.printCentered(F("SELECT."), 1, 0);
           messageTimer = millis();
           messageIndex = 0;
         }
       }
 
-      if (KeypadButtons.Pressed() == KeypadButtons.Right) {
+      if (KeypadButtons.Pressed() == KeypadButtons.Select) {
         ReleaseGate.close();
 
         for (byte seconds = 5; seconds > 0; seconds--) {
@@ -618,16 +618,21 @@ class Menu {
   long switcherTime;
 
   void displayFocusedMenu() {
+    switcherTime = millis();
     Display.printCentered(_MENUS_LABELS[_FOCUSED_MENU][0], 0, 0);
     Display.printCentered(_MENUS_LABELS[_FOCUSED_MENU][1], 1, 0);
-    switcherTime = millis();
   }
 
-  void switchFocusedMenus() {
+  void nextFocusedMenu() {
     if (_FOCUSED_MENU < _MAX_MENU) {
       _FOCUSED_MENU++;
-    } else if (_FOCUSED_MENU == _MAX_MENU) {
-      _FOCUSED_MENU = _MIN_MENU;
+    }
+    displayFocusedMenu();
+  }
+
+  void prevFocusedMenu() {
+    if (_FOCUSED_MENU > _MIN_MENU) {
+      _FOCUSED_MENU--;
     }
     displayFocusedMenu();
   }
@@ -660,7 +665,7 @@ class Menu {
     if (_FOCUSED_MENU == _STANDBY) {
       if ((millis() - messageTimer) > 1900) {
         if (messageIndex == 0) {
-          Display.printCentered(F("USE SELECT"), 0, 0);
+          Display.printCentered(F("USE RIGHT"), 0, 0);
           Display.printCentered(F("PARA NAVEGAR"), 1, 0);
           messageTimer = millis();
           messageIndex++;
@@ -668,7 +673,7 @@ class Menu {
       }
       if (millis() - messageTimer > 2900) {
         if (messageIndex == 1) {
-          Display.printCentered(F("USE RIGHT"), 0, 0);
+          Display.printCentered(F("USE SELECT"), 0, 0);
           Display.printCentered(F("PARA ENTRAR"), 1, 0);
           messageTimer = millis();
           messageIndex = 0;
@@ -676,15 +681,14 @@ class Menu {
       }
     }
 
-    if (KeypadButtons.Pressed() == KeypadButtons.Select) {
-      // Navegacao principal entre os menus
-      if (_SELECTED_MENU == _STANDBY) {
-        switchFocusedMenus();
-        delay(500);
-      }
+    if (uint16_t(millis()) > uint16_t(switcherTime + 10000) and _SELECTED_MENU == _STANDBY) {
+      _FOCUSED_MENU = _STANDBY;
+      switcherTime = millis();
+    }
 
+    if (KeypadButtons.Pressed() == KeypadButtons.Right) {
       // Voltar para escolha de menus apos somente focar em uma preferencia
-      else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
+      if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
         Options._FOCUSED_PREFS = _STANDBY;
         _SELECTED_MENU = _STANDBY;
         displayFocusedMenu();
@@ -704,7 +708,7 @@ class Menu {
         Options.decreasePrefValue(0.01);
         delay(150);
       }
-    } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
+    } else if (KeypadButtons.Pressed() == KeypadButtons.Select) {
       // Escolha de um menu especifico durante a navegacao entre os menus
       if (_SELECTED_MENU == _STANDBY && _FOCUSED_MENU != _STANDBY) {
         selectMenu();
@@ -737,6 +741,12 @@ class Menu {
         delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Up) {
+      // Facilita a navegacao principal entre os menus principais
+      if (_SELECTED_MENU == _STANDBY) {
+        prevFocusedMenu();
+        delay(250);
+      }
+
       // Foca na preferencia anterior somente se estiver no menu de preferencias e nenhuma for selecionada
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
         Options.focusPrevPrefs();
@@ -761,6 +771,12 @@ class Menu {
         delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Down) {
+      // Facilita a navegacao principal entre os menus principais
+      if (_SELECTED_MENU == _STANDBY) {
+        nextFocusedMenu();
+        delay(250);
+      }
+
       // Focaliza na proxima preferencia
       if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS == _STANDBY) {
         Options.focusNextPrefs();
@@ -790,11 +806,6 @@ class Menu {
         Options.increasePrefValue(0.01);
         delay(150);
       }
-    }
-
-    if (uint16_t(millis()) > uint16_t(switcherTime + 10000) and _SELECTED_MENU == _STANDBY) {
-      _FOCUSED_MENU = _STANDBY;
-      switcherTime = millis();
     }
   }
 } Menu;
