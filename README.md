@@ -8,7 +8,11 @@ AEMF-01: Equipamento Laboratorial para Estudos sobre Movimento na Física
 
 ## Sobre
 
-O AEMF-01 é um projeto de equipamento laboratorial de código aberto desenvolvido para a exploração e compreensão dos princípios do movimento na física. Inicialmente feito em alumínio, plástico e metal, a versão final disponibilizada ao público foi completamente reprojetada e modelada para a impressão 3D. Essa evolução não apenas otimiza a durabilidade do equipamento, mas também simplifica significativamente o processo de construção, tornando-o mais compacto e facilitando a reprodução por entusiastas e educadores.
+O AEMF-01 é um equipamento laboratorial de código aberto desenvolvido para a exploração e compreensão dos princípios do movimento na física. Inicialmente feito em alumínio, plástico e metal, a versão final disponibilizada ao público foi completamente reprojetada e modelada para a impressão 3D. Essa evolução não apenas otimiza a durabilidade do equipamento, mas também simplifica significativamente o processo de construção, tornando-o mais compacto e facilitando a reprodução por entusiastas e educadores. 
+
+### Objetivo Educacional:
+
+O projeto visa fornecer uma plataforma acessível para o estudo prático sobre o movimento, promovendo a compreensão conceitual e habilidades práticas. A capacidade de ajustar os sensores ao longo do trilho oferece flexibilidade para explorar uma variedade de experimentos, tornando-o um recurso valioso para ambientes educacionais e entusiastas da física.
 
 ## Características
 
@@ -19,22 +23,24 @@ O AEMF-01 é um projeto de equipamento laboratorial de código aberto desenvolvi
 
 ## Estrutura das pastas
 
+> Arquivos ou pastas que começam com `.` são arquivos ocultos referentes a configurações
+especificas do projeto ou do ambiente de desenvolvimento
+
 ```
-ÀEMF-01
-├── docs -- 
-│  ├── components -- 
-│  └── models -- 
-│     ├── base -- 
-│     ├── case -- 
-│     ├── rail -- 
-│     │  ├── base -- 
-│     │  └── support -- 
-│     └── sensor -- 
-│        ├── cabinet -- 
-│        └── support -- 
-├── include -- 
-├── lib -- 
-└── test -- 
+AEMF-01
+├── docs -- documentação
+│  ├── components -- arquivos sobre os componentes eletronicos (datasheets, diagramas e etc)
+│  ├── models -- partes remodeladas para impressão e montagem do projeto
+│  │  ├── base -- base do projeto (pés)
+│  │  ├── case -- case para o Arduino UNO
+│  │  ├── rail -- trilhos superior e inferior
+│  │  │  ├── base -- trilho inferior
+│  │  │  └── support -- trilho superior (rampa)
+│  │  └── sensor -- peças para acoplamento dos sensores ao trilho
+│  │     ├── cabinet -- gabinete para os sensores
+│  │     └── support -- suporte para estabilização do sensor
+│  └── references -- arquivos utilizados como referências
+├── src -- diretorio utilizado para armazenar o código-fonte do projeto
 ```
 
 ---
@@ -71,7 +77,7 @@ Na coluna **Docs** está listado os documentos tecnicos com mais informacoes sob
 
 ---
 
-## Montagem
+## Faça você mesmo
 
 ### Materiais
 
@@ -90,7 +96,7 @@ Na coluna **Docs** está listado os documentos tecnicos com mais informacoes sob
 
 
 ### Procedimento de montagem
-### Compilação, checagem e envio com o PlatformIO
+### Como compilar um projeto PlatformIO para o Arduino
 
 ---
 
