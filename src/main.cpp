@@ -360,8 +360,7 @@ class Reading {
         F("VELOCIDADE MEDIA"),
         (String)F("Primeira: ") + Data.meanVelocity[0] + F("cm/ms"),
         (String)F("Segunda: ") + Data.meanVelocity[1] + F("cm/ms"),
-        ""
-    };
+        ""};
 
     Serial.println(_top);
     for (byte line = 0; line < 23; line++) {
@@ -541,31 +540,30 @@ class Menu {
       _SELECTED_PAGE = _FOCUSED_PAGE;
       String _SUB_PAGE_LABEL[7][4] = {
           {},
-          {(String) F("PS1 ") + Reading.Data.sensorPosition[0],
-           (String) F("PS2 ") + Reading.Data.sensorPosition[1],
-           (String) F("PS3 ") + Reading.Data.sensorPosition[2],
+          {(String)F("PS1 ") + Reading.Data.sensorPosition[0],
+           (String)F("PS2 ") + Reading.Data.sensorPosition[1],
+           (String)F("PS3 ") + Reading.Data.sensorPosition[2],
            ""},
 
-          {(String) F("CR1 ") + Reading.Data.sensorTimestamps[1],
-           (String) F("CR2 ") + Reading.Data.sensorTimestamps[2],
-           (String) F("CR3 ") + Reading.Data.sensorTimestamps[3],
+          {(String)F("CR1 ") + Reading.Data.sensorTimestamps[1],
+           (String)F("CR2 ") + Reading.Data.sensorTimestamps[2],
+           (String)F("CR3 ") + Reading.Data.sensorTimestamps[3],
            ""},
 
-          {(String) F("VD1 ") + Reading.Data.distanceVariation[0],
-           (String) F("VD2 ") + Reading.Data.distanceVariation[1],
+          {(String)F("VD1 ") + Reading.Data.distanceVariation[0],
+           (String)F("VD2 ") + Reading.Data.distanceVariation[1],
            "",
            ""},
 
-          {(String) F("VT1 ") + Reading.Data.timeIntervals[0],
-           (String) F("VT2 ") + Reading.Data.timeIntervals[1],
+          {(String)F("VT1 ") + Reading.Data.timeIntervals[0],
+           (String)F("VT2 ") + Reading.Data.timeIntervals[1],
            "",
            ""},
 
-          {(String) F("VM1 ") + Reading.Data.meanVelocity[0],
-           (String) F("VM2 ") + Reading.Data.meanVelocity[1],
+          {(String)F("VM1 ") + Reading.Data.meanVelocity[0],
+           (String)F("VM2 ") + Reading.Data.meanVelocity[1],
            "",
-           ""}
-      };
+           ""}};
 
       if (_FOCUSED_SUBPAGE == _MIN_SUBPAGE) {
         Display.printCentered(_SUB_PAGE_LABEL[_SELECTED_PAGE][0], 0, 0);
