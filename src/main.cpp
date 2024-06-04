@@ -843,6 +843,7 @@ void setup() {
 
   ReleaseGate.begin(RELEASE_GATE_PIN);
   Properties.begin();
+  ReleaseGate.close();
 }
 
 // cppcheck-suppress unusedFunction
