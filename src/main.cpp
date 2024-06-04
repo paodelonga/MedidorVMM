@@ -310,21 +310,21 @@ class Reading {
           Display.printCentered(F("INICIADOS."), 1, 0);
 
           if (analogRead(FIRST_IR_SENSOR_PIN) < 600) {
-            Data.sensorTimestamps[1] = millis();
+            Data.sensorTimestamps[1] = millis() - Data.sensorTimestamps[0];
 
             Serial.println(F("AEMF :: PRIMEIRO SENSOR INTERROMPIDO."));
             Display.printCentered(F("PRIMEIRO IR"), 0, 0);
 
             while (1) {
               if (analogRead(SECOND_IR_SENSOR_PIN) < 600) {
-                Data.sensorTimestamps[2] = millis();
+                Data.sensorTimestamps[2] = millis() - Data.sensorTimestamps[0];;
 
                 Serial.println(F("AEMF :: SEGUNDO SENSOR INTERROMPIDO."));
                 Display.printCentered(F("SEGUNDO IR"), 0, 0);
 
                 while (1) {
                   if (analogRead(THIRD_IR_SENSOR_PIN) < 600) {
-                    Data.sensorTimestamps[3] = millis();
+                    Data.sensorTimestamps[3] = millis() - Data.sensorTimestamps[0];;
 
                     Serial.println(F("AEMF :: TERCEIRO SENSOR INTERROMPIDO.\n"));
                     Display.printCentered(F("TERCEIRO IR"), 0, 0);
