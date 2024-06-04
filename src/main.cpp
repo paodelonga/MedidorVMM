@@ -614,7 +614,7 @@ class Menu {
 
   byte _FOCUSED_MENU;
   byte _SELECTED_MENU;
-  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"DEFINIR POSICAO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
+  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"POSICIONAMENTO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
   long switcherTime;
 
   void displayFocusedMenu() {
