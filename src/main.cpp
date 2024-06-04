@@ -241,31 +241,13 @@ class ReleaseGate {
 
  public:
   void open() {
-    Servo.write(65);
-    delay(100);
-
-    Servo.write(63);
-    delay(100);
-
-    Servo.write(65);
-    delay(100);
-
-    Servo.write(63);
-    delay(100);
+    Servo.write(45);
+    delay(150);
   }
 
   void close() {
-    Servo.write(20);
-    delay(100);
-
-    Servo.write(10);
-    delay(100);
-
-    Servo.write(20);
-    delay(100);
-
-    Servo.write(10);
-    delay(100);
+    Servo.write(24);
+    delay(150);
   }
 
   void begin(byte servoPin) { Servo.attach(servoPin); }
