@@ -311,7 +311,7 @@ class Reading {
       if (KeypadButtons.Pressed() == KeypadButtons.Right) {
         ReleaseGate.close();
 
-        for (byte seconds = random(0, 10); seconds > 0; seconds--) {
+        for (byte seconds = 5; seconds > 0; seconds--) {
           Serial.print(F("AEMF :: LIBERANDO OBJETO EM: "));
           Serial.print(seconds);
           Serial.println(F("s"));
