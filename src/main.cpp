@@ -320,10 +320,9 @@ class Reading {
           delay(1000);
         }
 
-        Serial.println(F("AEMF :: INICIANDO LEITURA DOS SENSORES.\n"));
+        Serial.println(F("\nAEMF :: INICIANDO LEITURA DOS SENSORES.\n"));
         ReleaseGate.open();
         Data.sensorTimestamps[0] = millis();
-
         while (1) {
           Display.printCentered(F("SENSORES"), 0, 0);
           Display.printCentered(F("INICIADOS."), 1, 0);
@@ -673,7 +672,7 @@ class Menu {
 
   byte _FOCUSED_MENU;
   byte _SELECTED_MENU;
-  const char *_MENUS_LABELS[4][2] = {{}, {"FAZER NOVA", "LEITURA"}, {"DEFINIR POSICAO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
+  const char *_MENUS_LABELS[4][2] = {{}, {"INICIAR NOVA", "LEITURA"}, {"DEFINIR POSICAO", "DOS SENSORES"}, {"EXIBIR DADOS", "DA LEITURA"}};
   long switcherTime;
 
   void displayFocusedMenu() {
