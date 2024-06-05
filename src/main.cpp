@@ -331,6 +331,8 @@ class Reading {
             }
           }
         }
+      } else if (KeypadButtons.Pressed() == KeypadButtons.Right) {
+        return;
       }
     }
   }
@@ -617,9 +619,9 @@ class Menu {
   long switcherTime;
 
   void displayFocusedMenu() {
-    switcherTime = millis();
     Display.printCentered(_MENUS_LABELS[_FOCUSED_MENU][0], 0, 0);
     Display.printCentered(_MENUS_LABELS[_FOCUSED_MENU][1], 1, 0);
+    switcherTime = millis();
   }
 
   void nextFocusedMenu() {
@@ -640,6 +642,7 @@ class Menu {
     switch (_FOCUSED_MENU) {
       case _READ:
         Reading.read();
+        displayFocusedMenu();
         break;
       case _DISPLAY:
         _SELECTED_MENU = _DISPLAY;
@@ -662,9 +665,9 @@ class Menu {
 
   void loop() {
     if (_FOCUSED_MENU == _STANDBY) {
-      if ((millis() - messageTimer) > 1900) {
+      if ((millis() - messageTimer) > 2300) {
         if (messageIndex == 0) {
-          Display.printCentered(F("USE RIGHT"), 0, 0);
+          Display.printCentered(F("USE UP E DOWN"), 0, 0);
           Display.printCentered(F("PARA NAVEGAR"), 1, 0);
           messageTimer = millis();
           messageIndex++;
@@ -674,6 +677,14 @@ class Menu {
         if (messageIndex == 1) {
           Display.printCentered(F("USE SELECT"), 0, 0);
           Display.printCentered(F("PARA ENTRAR"), 1, 0);
+          messageTimer = millis();
+          messageIndex++;
+        }
+      }
+      if (millis() - messageTimer > 2300) {
+        if (messageIndex == 2) {
+          Display.printCentered(F("E USE RIGHT"), 0, 0);
+          Display.printCentered(F("PARA VOLTAR"), 1, 0);
           messageTimer = millis();
           messageIndex = 0;
         }
