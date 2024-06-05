@@ -239,8 +239,8 @@ class Reading {
   void read() {
     ReleaseGate.open();
 
-    Serial.println(F("AEMF :: PARA INICIAR POSICIONE O OBJETO"));
-    Serial.println(F("AEMF :: E PRESSIONE SELECT PARA RETENCAO.\n"));
+    Serial.println(F("AEMF :: ANTES DE INICIAR A PRIMEIRA LEITURA"));
+    Serial.println(F("AEMF :: FAÇA O POSICIONAMENTO DOS SENSORES.\n"));
 
     long messageTimer = millis();
     byte messageIndex = 0;
@@ -274,7 +274,7 @@ class Reading {
           delay(1000);
         }
 
-        Serial.println(F("\nAEMF :: INICIANDO LEITURA DOS SENSORES.\n"));
+        Serial.println(F("\nAEMF :: INICIANDO LEITURA DOS SENSORES."));
         ReleaseGate.open();
         Data.sensorTimestamps[0] = millis();
         while (1) {
@@ -320,9 +320,10 @@ class Reading {
                     Data.meanVelocity[1] = Data.distanceVariation[1] / Data.timeIntervals[1];  // S3 -> S2
 
                     Serial.println(F("AEMF :: PROCESSAMENTO COMPLETO.\n"));
+                    Serial.println(F("AEMF :: LEITURA FINALIZADA."));
 
-                    Serial.println(F("AEMF :: PRESSIONE SELECT E SELECIONE O MODO"));
-                    Serial.println(F("AEMF :: DE EXIBICAO PARA VISUALIZAR OS DADOS.\n"));
+                    Serial.println(F("AEMF :: PARA VISUALIZAR OS DADOS VÁ ATÉ O MENU"));
+                    Serial.println(F("AEMF :: PRINCIPAL E ENTRE EM EXIBIR DADOS.\n"));
                     return;
                   }
                 }
