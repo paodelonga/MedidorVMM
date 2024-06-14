@@ -714,7 +714,13 @@ class Menu {
         displayFocusedMenu();
         delay(250);
       }
-
+      // Voltar para a escolha de paginas
+      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
+        DisplayPage._SELECTED_PAGE = _STANDBY;
+        DisplayPage._FOCUSED_SUBPAGE = _STANDBY;
+        DisplayPage.displayFocusedPage();
+        delay(250);
+      }
       // Diminui o valor decimal de uma preferencia expecifica
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options.decreasePrefValue(0.01);
@@ -743,13 +749,6 @@ class Menu {
       else if (_SELECTED_MENU == _PREFERENCES && Options._SELECTED_PREFS != _STANDBY) {
         Options._SELECTED_PREFS = _STANDBY;
         Options.displayFocusedPref();
-        delay(250);
-      }
-      // Voltar para a escolha de paginas
-      else if (_SELECTED_MENU == _DISPLAY && DisplayPage._SELECTED_PAGE != _STANDBY) {
-        DisplayPage._SELECTED_PAGE = _STANDBY;
-        DisplayPage._FOCUSED_SUBPAGE = _STANDBY;
-        DisplayPage.displayFocusedPage();
         delay(250);
       }
     } else if (KeypadButtons.Pressed() == KeypadButtons.Up) {
