@@ -647,10 +647,12 @@ class Menu {
       case _DISPLAY:
         _SELECTED_MENU = _DISPLAY;
         DisplayPage._FOCUSED_PAGE = DisplayPage._MIN_PAGE;
-        DisplayPage.displayFocusedPage();
+        Display.printCentered("OBTENDO DADOS", 0, 0);
+        Display.printCentered("AGUARDE...", 1, 0);
         if (Serial) {
           Reading.display();
         }
+        DisplayPage.displayFocusedPage();
         break;
       case _PREFERENCES:
         _SELECTED_MENU = _PREFERENCES;
