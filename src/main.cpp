@@ -308,8 +308,8 @@ class Reading {
                     Serial.println(F("AEMF :: INICIANDO CALCULO DOS DADOS."));
 
                     Serial.println(F("AEMF :: CALCULANDO VARIAÇÃO DE ESPAÇO."));
-                    Data.distanceVariation[0] = (Data.sensorPosition[1] + 0.11) - (Data.sensorPosition[0] + 0.11);  // S2 -> S1
-                    Data.distanceVariation[1] = (Data.sensorPosition[2] + 0.11) - (Data.sensorPosition[1] + 0.11);  // S3 -> S2
+                    Data.distanceVariation[0] = (Data.sensorPosition[1] + 1.25) - (Data.sensorPosition[0] + 1.25);  // S2 -> S1
+                    Data.distanceVariation[1] = (Data.sensorPosition[2] + 1.25) - (Data.sensorPosition[1] + 1.25);  // S3 -> S2
 
                     Serial.println(F("AEMF :: CALCULADO VARIAÇÃO DE TEMPO."));
                     Data.timeIntervals[0] = Data.sensorTimestamps[2] - Data.sensorTimestamps[1];  // S2 -> S1
@@ -343,9 +343,9 @@ class Reading {
     String messages[23] = {
         "",
         F("POSICAO DO SENSOR"),
-        (String)F("Primeiro: ") + Data.sensorPosition[0] + F("cm"),
-        (String)F("Segundo: ") + Data.sensorPosition[1] + F("cm"),
-        (String)F("Terceiro: ") + Data.sensorPosition[2] + F("cm"),
+        (String)F("Primeiro: ") + (Data.sensorPosition[0] + 1.25) + F("cm"),
+        (String)F("Segundo: ") + (Data.sensorPosition[1] + 1.25) + F("cm"),
+        (String)F("Terceiro: ") + (Data.sensorPosition[2] + 1.25) + F("cm"),
         "",
         F("CRONOMETRO DO SENSOR"),
         (String)F("Primeiro: ") + Data.sensorTimestamps[1] + F("ms"),
@@ -543,9 +543,9 @@ class Menu {
       _SELECTED_PAGE = _FOCUSED_PAGE;
       String _SUB_PAGE_LABEL[7][4] = {
           {},
-          {(String)F("PS1 ") + Reading.Data.sensorPosition[0],
-           (String)F("PS2 ") + Reading.Data.sensorPosition[1],
-           (String)F("PS3 ") + Reading.Data.sensorPosition[2],
+          {(String)F("PS1 ") + (Reading.Data.sensorPosition[0] + 1.25),
+           (String)F("PS2 ") + (Reading.Data.sensorPosition[1] + 1.25),
+           (String)F("PS3 ") + (Reading.Data.sensorPosition[2] + 1.25),
            ""},
 
           {(String)F("CR1 ") + Reading.Data.sensorTimestamps[1],
